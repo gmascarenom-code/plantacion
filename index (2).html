@@ -1,0 +1,2043 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="UTF-8">
+<title>Plantación y Replante 2027 - Grupo Molina Jalisco</title>
+<style>
+  :root{
+    --deere-green: #367C2B;
+    --deere-green-dark: #245420;
+    --deere-yellow: #FFDE00;
+    --soil: #6B4A2F;
+    --cream: #FBF8F1;
+    --panel: #FFFFFF;
+    --line: #E4DFD2;
+    --ink: #2B2A25;
+    --ink-soft: #6E6A5C;
+    --red: #C23B3B;
+    --red-bg: #FBE8E8;
+    --orange: #C97A1F;
+    --orange-bg: #FBEFDD;
+    --green-bg: #E6F2E2;
+    --blue: #2E6FA3;
+    --blue-bg: #E4EEF6;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background: var(--cream);
+    font-family: 'Segoe UI', Roboto, -apple-system, sans-serif;
+    color: var(--ink);
+    padding: 28px;
+  }
+  .wrap{max-width:1300px; margin:0 auto;}
+
+  /* Tabs */
+  .top-actions{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+    gap:8px;
+    margin-bottom: 10px;
+  }
+  .top-actions .btn{font-size:12.5px; padding:8px 14px;}
+  .top-actions-note{
+    font-size:11.5px;
+    color: var(--ink-soft);
+    align-self:center;
+    margin-right:auto;
+  }
+  .btn-export{background:#EFEAD9; color:var(--ink);}
+  .btn-export:hover{background:#E5DFCB;}
+  .btn-save{background: var(--deere-green); color:white;}
+  .btn-save:hover{box-shadow:0 4px 10px rgba(54,124,43,0.35);}
+  .btn-save.saving{opacity:0.7; cursor:wait;}
+  .btn-sheets{background:#1B7A43; color:white;}
+  .btn-sheets:hover{box-shadow:0 4px 10px rgba(27,122,67,0.35);}
+  .import-input{display:none;}
+
+  .tabs{
+    display:flex;
+    gap:6px;
+    margin-bottom: 14px;
+  }
+  .tab-btn{
+    border:none;
+    background: #EFEAD9;
+    color: var(--ink-soft);
+    padding: 10px 18px;
+    border-radius: 10px 10px 0 0;
+    font-size: 13.5px;
+    font-weight:700;
+    cursor:pointer;
+    display:flex; align-items:center; gap:7px;
+    transition: background .15s, color .15s;
+  }
+  .tab-btn.active{
+    background: var(--panel);
+    color: var(--deere-green-dark);
+    box-shadow: 0 -2px 6px rgba(0,0,0,0.04);
+  }
+  .tab-btn:not(.active):hover{background:#E5DFCB;}
+
+  /* Header */
+  .hero{
+    background: linear-gradient(135deg, var(--deere-green) 0%, var(--deere-green-dark) 100%);
+    border-radius: 14px;
+    padding: 22px 28px;
+    color: white;
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    box-shadow: 0 6px 18px rgba(36,84,32,0.25);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after{
+    content:"";
+    position:absolute;
+    right:-40px; top:-40px;
+    width:180px; height:180px;
+    background: var(--deere-yellow);
+    opacity:0.12;
+    border-radius:50%;
+  }
+  .hero-title{position:relative; z-index:1; display:flex; align-items:center; gap:16px;}
+  .hero-logo{
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: white;
+    padding: 4px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    flex-shrink: 0;
+  }
+  .hero-title h1{
+    margin:0;
+    font-size: 26px;
+    letter-spacing: 0.3px;
+  }
+  .hero-title p{
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: #DDEFDA;
+  }
+  .badges{display:flex; gap:10px; position:relative; z-index:1; flex-wrap:wrap;}
+  .badge{
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    display:flex; align-items:center; gap:6px;
+    background: rgba(255,255,255,0.14);
+    border: 1px solid rgba(255,255,255,0.25);
+    white-space: nowrap;
+  }
+  .dot{width:8px; height:8px; border-radius:50%; flex-shrink:0;}
+  .dot.red{background:#FF6B6B;}
+  .dot.orange{background:#FFB74D;}
+  .dot.green{background:#8BE28B;}
+  .dot.blue{background:#8AC4EA;}
+
+  /* Toolbar */
+  .toolbar{
+    margin-top: 20px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px 16px;
+    display:flex;
+    gap:10px;
+    align-items:center;
+    flex-wrap: wrap;
+  }
+  select, input[type=text]{
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 9px 12px;
+    font-size: 13px;
+    color: var(--ink);
+    background: var(--cream);
+    outline: none;
+  }
+  select:focus, input:focus{border-color: var(--deere-green);}
+  input[type=text]{min-width: 240px; flex:1;}
+  .btn{
+    border:none; border-radius:8px;
+    padding:9px 16px;
+    font-size:13px; font-weight:600;
+    cursor:pointer;
+    display:flex; align-items:center; gap:6px;
+    transition: transform .08s ease, box-shadow .15s ease;
+  }
+  .btn:active{transform: scale(0.97);}
+  .btn-clear{background:transparent; color: var(--ink-soft); border:1px solid var(--line);}
+  .btn-clear:hover{background:#F1EEE4;}
+  .btn-primary{background: var(--soil); color:white;}
+  .btn-primary:hover{box-shadow:0 4px 10px rgba(107,74,47,0.35);}
+  .count-pill{
+    margin-left:auto;
+    font-size:12px;
+    color: var(--ink-soft);
+    background: var(--cream);
+    border:1px solid var(--line);
+    padding:8px 14px;
+    border-radius: 999px;
+    font-weight:600;
+    white-space:nowrap;
+  }
+
+  /* Table */
+  .table-panel{
+    margin-top:16px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    overflow-x: auto;
+  }
+  table{width:100%; border-collapse: collapse;}
+  thead th{
+    background: var(--deere-yellow);
+    color: var(--deere-green-dark);
+    text-align:left;
+    font-size:11.5px;
+    letter-spacing:0.6px;
+    text-transform:uppercase;
+    padding: 12px 14px;
+    font-weight:800;
+    white-space:nowrap;
+  }
+  tbody tr{border-top:1px solid var(--line);}
+  tbody tr:nth-child(even){background: #FCFBF6;}
+  tbody tr:hover{background:#F5F1E4;}
+  td{padding: 9px 14px; vertical-align:middle;}
+
+  .key-input{
+    background: #FFF7DD;
+    border:1px solid #EBD98A;
+    border-radius:6px;
+    padding:7px 10px;
+    font-weight:700;
+    font-size:13px;
+    color: var(--deere-green-dark);
+    width: 100px;
+  }
+  .cell-input{
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:7px 9px;
+    font-size:13px;
+    background: white;
+    width: 100%;
+    min-width: 90px;
+  }
+  .cell-input:focus{outline:none; border-color:var(--deere-green);}
+  select.cell-input{cursor:pointer;}
+
+  .estado-select{
+    min-width: 150px;
+    font-weight:700;
+    font-size:12.5px;
+  }
+  /* estados tractores */
+  .estado-select[data-state="parado"]{background:var(--red-bg); color:var(--red); border-color:#EFC6C6;}
+  .estado-select[data-state="reparacion"]{background:var(--orange-bg); color:var(--orange); border-color:#F1D6A8;}
+  .estado-select[data-state="ok"]{background:var(--green-bg); color:var(--deere-green-dark); border-color:#C9E3C2;}
+  /* estados requisiciones */
+  .estado-select[data-state="solicitado"]{background:var(--blue-bg); color:var(--blue); border-color:#C4DAEA;}
+  .estado-select[data-state="pendiente"]{background:var(--orange-bg); color:var(--orange); border-color:#F1D6A8;}
+  .estado-select[data-state="aprobado"]{background:var(--green-bg); color:var(--deere-green-dark); border-color:#C9E3C2;}
+  .estado-select[data-state="rechazado"]{background:var(--red-bg); color:var(--red); border-color:#EFC6C6;}
+  /* estados vehiculos */
+  .estado-select[data-state="taller"]{background:var(--orange-bg); color:var(--orange); border-color:#F1D6A8;}
+  .estado-select[data-state="taller_externo"]{background:var(--blue-bg); color:var(--blue); border-color:#C4DAEA;}
+  .estado-select[data-state=""]{background:white; color:var(--ink-soft);}
+
+  .dias{
+    font-weight:700;
+    font-size:13px;
+    white-space:nowrap;
+  }
+  .dias.crit{color:var(--red);}
+  .dias.warn{color:var(--orange);}
+  .dias.ok{color:var(--ink-soft);}
+
+  .del-btn{
+    background:none; border:none; cursor:pointer;
+    color:#C23B3B; font-size:16px;
+    padding:6px; border-radius:6px;
+    transition: background .15s;
+  }
+  .del-btn:hover{background:#FBE8E8;}
+
+  .notes-btn{
+    background:none; border:none; cursor:pointer;
+    font-size:14px;
+    padding:6px; border-radius:6px;
+    transition: background .15s;
+  }
+  .notes-btn:hover{background:#EFEAD9;}
+  .notes-btn.active{background:#DCE8D6;}
+  .actions-cell{display:flex; align-items:center; gap:2px; justify-content:center;}
+
+  tr.notes-row td{
+    background: #FBF8ED;
+    padding: 8px 14px 12px;
+    border-top: none;
+  }
+  .notes-box label{
+    display:block;
+    font-size:10.5px;
+    font-weight:700;
+    color: var(--ink-soft);
+    text-transform:uppercase;
+    letter-spacing:.4px;
+    margin-bottom:4px;
+  }
+  .notes-box textarea{
+    width:100%;
+    min-height:56px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:8px 10px;
+    font-family: inherit;
+    font-size:13px;
+    resize: vertical;
+    background:white;
+  }
+  .notes-box textarea:focus{outline:none; border-color:var(--deere-green);}
+
+  .empty-row td{
+    text-align:center;
+    padding: 40px;
+    color: var(--ink-soft);
+    font-size:14px;
+  }
+
+  .save-note{
+    text-align:right;
+    font-size:11px;
+    color: var(--ink-soft);
+    margin-top: 8px;
+    min-height: 14px;
+  }
+
+  .sheet{display:none;}
+  .sheet.active{display:block;}
+
+  /* KPI cards */
+  .kpi-row{
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-top: 16px;
+    margin-bottom: 14px;
+  }
+  .kpi-card{
+    background: var(--panel);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding: 16px 18px;
+  }
+  .kpi-label{
+    font-size:11px;
+    letter-spacing:0.6px;
+    text-transform:uppercase;
+    color: var(--ink-soft);
+    font-weight:700;
+  }
+  .kpi-value{
+    font-size: 28px;
+    font-weight:800;
+    margin-top:6px;
+  }
+  .kpi-value.red{color:var(--red);}
+  .kpi-value.orange{color:var(--orange);}
+  .kpi-value.blue{color:var(--blue);}
+  .kpi-value.green{color:var(--deere-green);}
+
+  /* Period bar */
+  .period-bar{
+    background: var(--panel);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding: 12px 16px;
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .period-label{font-size:12px; font-weight:700; color:var(--ink-soft);}
+  .period-btn{
+    border:1px solid var(--line);
+    background: var(--cream);
+    color: var(--ink-soft);
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size:12.5px;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .period-btn.active{background: var(--soil); color:white; border-color:var(--soil);}
+  .period-dates{display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--ink-soft); margin-left:6px;}
+  .period-dates input[type=date]{padding:6px 8px; font-size:12.5px;}
+  .period-range{margin-left:auto; font-size:11.5px; color:var(--ink-soft); white-space:nowrap;}
+
+  /* Progress */
+  .avance-cell{display:flex; align-items:center; gap:8px; min-width:130px;}
+  .avance-input{width:52px; flex-shrink:0;}
+  .avance-bar{
+    flex:1;
+    height:7px;
+    background:#E9E5D6;
+    border-radius:99px;
+    overflow:hidden;
+  }
+  .avance-fill{
+    height:100%;
+    background: var(--deere-green);
+    border-radius:99px;
+    transition: width .2s ease;
+  }
+  .avance-fill.low{background:#C9C4B0;}
+  .avance-fill.mid{background: var(--orange);}
+  .avance-fill.done{background: var(--deere-green);}
+
+  .prioridad-select[data-p="alta"]{color:var(--red); font-weight:700;}
+  .prioridad-select[data-p="media"]{color:var(--orange); font-weight:700;}
+  .prioridad-select[data-p="baja"]{color:var(--ink-soft); font-weight:700;}
+
+  .area-tag-select{
+    font-weight:600;
+    font-size:12.5px;
+    color: var(--soil);
+    background: #FBEFE2;
+    border-color:#EAD9C2;
+  }
+
+  @media (max-width: 900px){
+    .kpi-row{grid-template-columns: repeat(2,1fr);}
+  }
+
+  /* Resumen */
+  .resumen-grid{
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-top: 18px;
+  }
+  .resumen-panel{
+    background: var(--panel);
+    border:1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px 20px;
+  }
+  .resumen-panel h3{
+    margin: 0 0 4px;
+    font-size: 15px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .resumen-panel .resumen-total{
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-bottom: 14px;
+  }
+  .resumen-stat-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    font-size: 13px;
+    padding: 7px 0;
+    border-top: 1px solid var(--line);
+  }
+  .resumen-stat-row:first-of-type{border-top:none;}
+  .resumen-stat-label{display:flex; align-items:center; gap:8px; color:var(--ink);}
+  .resumen-stat-value{font-weight:800; font-size:14px;}
+  .stacked-bar{
+    display:flex;
+    height: 10px;
+    border-radius: 99px;
+    overflow:hidden;
+    margin: 14px 0 4px;
+    background: #EFEAD9;
+  }
+  .stacked-seg{height:100%;}
+  .resumen-empty{font-size:12.5px; color:var(--ink-soft); padding:10px 0;}
+
+  .atencion-panel{
+    background: var(--panel);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding: 18px 20px;
+    margin-top: 16px;
+  }
+  .atencion-panel h3{margin:0 0 10px; font-size:15px;}
+  .atencion-list{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px;}
+  .atencion-item{
+    display:flex; align-items:center; gap:10px;
+    font-size:13px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    background: var(--cream);
+    border: 1px solid var(--line);
+  }
+  .atencion-item .tag{
+    font-size:10.5px; font-weight:800; letter-spacing:.4px;
+    padding: 3px 8px; border-radius:6px; text-transform:uppercase;
+    flex-shrink:0;
+  }
+  .tag-red{background:var(--red-bg); color:var(--red);}
+  .tag-orange{background:var(--orange-bg); color:var(--orange);}
+  .atencion-none{
+    font-size:13px; color: var(--deere-green-dark); font-weight:600;
+    padding: 6px 0;
+  }
+
+  @media (max-width: 900px){
+    .resumen-grid{grid-template-columns: 1fr 1fr;}
+  }
+  @media (max-width: 600px){
+    .resumen-grid{grid-template-columns: 1fr;}
+  }
+
+  /* ============ GANTT PLANTACIÓN ============ */
+  .gantt-wrap{
+    background: var(--panel);
+    border:1px solid var(--line);
+    border-radius:12px;
+    overflow-x:auto;
+    margin-top:16px;
+  }
+  table.gantt{
+    border-collapse: collapse;
+    font-size: 11px;
+    min-width: 100%;
+  }
+  table.gantt th, table.gantt td{
+    border: 1px solid #DCD7C6;
+    padding: 3px 5px;
+    white-space: nowrap;
+  }
+  .gantt-info-head{
+    background: var(--deere-green-dark);
+    color: white;
+    font-weight:800;
+    font-size:11px;
+    text-align:left;
+    position: sticky;
+    top:0;
+    z-index:3;
+  }
+  .gantt-month-head{
+    background: var(--deere-green);
+    color:white;
+    font-weight:800;
+    text-align:center;
+    font-size:11px;
+    position:sticky; top:0; z-index:2;
+  }
+  .gantt-week-head{
+    background: var(--deere-yellow);
+    color:var(--deere-green-dark);
+    font-weight:800;
+    text-align:center;
+    font-size:10px;
+    width:26px;
+    min-width:26px;
+    position:sticky; top:24px; z-index:2;
+  }
+  .gantt-sub{
+    font-weight:800;
+    font-size:10.5px;
+    text-align:center;
+    color:white;
+    min-width:110px;
+  }
+  .gantt-sub.terrenos{background:#8C8C8C; color:#FFD500;}
+  .gantt-sub.conducciones{background:#8C8C8C; color:#3BAE6B;}
+  .gantt-sub.riego{background:#8C8C8C; color:#D98A3D;}
+  .gantt-sub.estructuras{background:#8C8C8C; color:#5AA5DE;}
+  .gantt-labor-head{
+    text-align:left;
+  }
+  .gantt-labor input{
+    border:none; background:transparent; font-size:11px; min-width:80px; max-width:340px;
+    font-family: inherit; color: var(--ink);
+  }
+  .gantt-labor input:focus{outline:1px solid var(--deere-green); background:white;}
+  .gantt-resp input{
+    border:none; background:transparent; font-size:11px; width:110px;
+    font-family: inherit; color: var(--ink);
+  }
+  .gantt-resp input:focus{outline:1px solid var(--deere-green); background:white;}
+  .gantt-num input{
+    border:none; background:transparent; font-size:11px; width:38px; text-align:center;
+    font-family: inherit;
+  }
+  .gantt-num input:focus{outline:1px solid var(--deere-green); background:white;}
+  .gantt-week-cell{
+    background: #F1EFE6;
+    width:26px;
+    cursor:pointer;
+  }
+  .gantt-week-cell:hover{
+    outline: 2px solid var(--deere-green-dark);
+    outline-offset: -2px;
+  }
+  .gantt-week-cell.filled.terrenos{background:#FFD500;}
+  .gantt-week-cell.filled.conducciones{background:#2FA968;}
+  .gantt-week-cell.filled.riego{background:#C77A30;}
+  .gantt-week-cell.filled.estructuras{background:#2E86C1;}
+  .gantt-range-cell{
+    background:white;
+  }
+  .gantt-range-cell input{
+    border:1px solid var(--line); border-radius:4px; width:34px; font-size:10.5px;
+    text-align:center; padding:2px;
+  }
+  .gantt-sub-select{
+    font-size:10px; font-weight:700; border:none; background:transparent; width:100%;
+    text-align:center;
+  }
+  .gantt-sub.terrenos select{color:#FFD500;}
+  .gantt-sub.conducciones select{color:#3BAE6B;}
+  .gantt-sub.riego select{color:#D98A3D;}
+  .gantt-sub.estructuras select{color:#5AA5DE;}
+  .gantt-del{
+    background:none; border:none; cursor:pointer; color:#C23B3B; font-size:12px;
+  }
+
+  @media (max-width: 800px){
+    .hero{flex-direction:column; align-items:flex-start;}
+    table{font-size:12px;}
+  }
+
+  .proj-tag{display:inline-block; font-size:10.5px; font-weight:800; padding:2px 8px; border-radius:6px; text-transform:uppercase; letter-spacing:.4px;}
+  .proj-tag.plantacion{background:var(--green-bg); color:var(--deere-green-dark);}
+  .proj-tag.replante{background:var(--blue-bg); color:var(--blue);}
+  .resumen-grid.proj{grid-template-columns: repeat(6, 1fr);}
+  .kpis-top{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-top:18px;}
+  .kpi-box{background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px 18px;}
+  .kpi-box .k-label{font-size:12px; color:var(--ink-soft);}
+  .kpi-box .k-val{font-size:24px; font-weight:800; color:var(--deere-green-dark);}
+  .prog{height:10px; background:#EFEAD9; border-radius:99px; overflow:hidden; margin:10px 0 4px;}
+  .prog > div{height:100%; background:var(--deere-green);}
+  .resumen-panel.clickable{cursor:pointer;}
+  .resumen-panel.clickable:hover{border-color:var(--deere-green);}
+  .gantt-week-head.now{background:var(--deere-green-dark); color:white;}
+  .gantt-week-cell.now{box-shadow: inset 2px 0 0 #C23B3B, inset -2px 0 0 #C23B3B;}
+  .hero-ha{font-size:13px; font-weight:800; background:var(--deere-yellow); color:var(--deere-green-dark); padding:4px 10px; border-radius:8px; margin-left:8px;}
+  .sub-cards{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:16px;}
+  .sub-card{background:var(--panel); border:1px solid var(--line); border-left:6px solid #8C8C8C; border-radius:10px; padding:12px 14px; cursor:pointer;}
+  .sub-card:hover{border-color:var(--deere-green);}
+  .sub-card.sel{outline:2px solid var(--deere-green-dark); background:var(--green-bg);}
+  .sub-card.terrenos{border-left-color:#FFD500;} .sub-card.conducciones{border-left-color:#2FA968;}
+  .sub-card.riego{border-left-color:#C77A30;} .sub-card.estructuras{border-left-color:#2E86C1;}
+  .sub-card-top{display:flex; justify-content:space-between; align-items:baseline;}
+  .sub-card-name{font-weight:800; font-size:13px; letter-spacing:.3px;}
+  .sub-card-av{font-weight:800; font-size:20px; color:var(--deere-green-dark);}
+  .sub-card-meta{font-size:11.5px; color:var(--ink-soft);}
+  .grp-atr{color:var(--red); font-weight:700;}
+  tr.grp-row{cursor:pointer; background:#F6F3EA;}
+  tr.grp-row:hover td{background:#EFEAD9;}
+  tr.grp-row td{font-weight:700; font-size:11px;}
+  tr.grp-row td.gantt-sub{background:#3F3F3F; font-weight:800; font-size:11.5px; letter-spacing:.3px; text-align:left; padding-left:8px;}
+  tr.grp-row .gantt-week-cell.grp.filled{opacity:.85;}
+  .grp-num{text-align:center;}
+  .grp-av{display:flex; align-items:center; gap:5px;}
+  .mini-prog{flex:1; height:7px; background:#E4DFD2; border-radius:99px; overflow:hidden; min-width:30px;}
+  .mini-prog > div{height:100%; background:var(--deere-green);}
+  .mini-prog > div.terrenos{background:#E0BB00;} .mini-prog > div.conducciones{background:#2FA968;}
+  .mini-prog > div.riego{background:#C77A30;} .mini-prog > div.estructuras{background:#2E86C1;}
+  .rs-sub{display:grid; grid-template-columns:86px 1fr 34px; align-items:center; gap:6px; font-size:11px; padding:5px 0; border-top:1px solid var(--line);}
+  .rs-sub b{text-align:right;}
+  .at-man-head{display:flex; justify-content:space-between; align-items:center; margin:18px 0 8px; padding-top:14px; border-top:1px dashed var(--line);}
+  .at-man-head h4{margin:0; font-size:14px;}
+  .at-man-toggle{font-size:12px; color:var(--ink-soft); display:flex; align-items:center; gap:5px;}
+  .at-form{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;}
+  .at-form select, .at-form input{padding:7px 10px; border:1px solid var(--line); border-radius:6px; font-size:13px; font-family:inherit; background:white;}
+  .at-form #at-texto{flex:1; min-width:220px;}
+  .atencion-item.at-man{flex-wrap:wrap;}
+  .at-man select, .at-man input{font-family:inherit; font-size:12.5px; border:1px solid transparent; background:transparent; border-radius:5px; padding:3px 5px;}
+  .at-man select:hover, .at-man input:hover{border-color:var(--line); background:white;}
+  .at-man input:focus, .at-man select:focus{outline:1px solid var(--deere-green); background:white;}
+  .at-nivel-sel{font-size:10.5px !important; font-weight:800; cursor:pointer; border-radius:6px !important;}
+  .at-nivel-sel.tag-red{background:var(--red-bg) !important; color:var(--red);}
+  .at-nivel-sel.tag-orange{background:var(--orange-bg) !important; color:var(--orange);}
+  .at-proy-sel{font-weight:700; color:var(--deere-green-dark);}
+  .at-txt{flex:1; min-width:200px;}
+  .at-rsp{width:140px;}
+  .at-fecha{font-size:11px; color:var(--ink-soft);}
+  .at-chk{font-size:12px; display:flex; align-items:center; gap:4px; color:var(--ink-soft); cursor:pointer;}
+  .at-man.resuelto{opacity:.55;}
+  .at-man.resuelto .at-txt{text-decoration:line-through;}
+
+  /* ============ REPORTE DIRECTORIO ============ */
+  .rep-controls{display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap; background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px 16px; margin-top:6px;}
+  .rep-controls label{display:flex; flex-direction:column; font-size:11.5px; color:var(--ink-soft); gap:3px; font-weight:600;}
+  .rep-controls select, .rep-controls input{padding:7px 10px; border:1px solid var(--line); border-radius:6px; font-size:13px; font-family:inherit; min-width:220px;}
+  .rep-help{font-size:12px; color:var(--ink-soft); margin:8px 2px 12px;}
+  .rep-page{background:white; border:1px solid var(--line); border-radius:6px; box-shadow:0 2px 10px rgba(0,0,0,.06); padding:22px 26px; margin:0 auto 18px; max-width:1100px; font-size:12px;}
+  .rep-page h2{font-size:13px; text-transform:uppercase; letter-spacing:.5px; color:var(--deere-green-dark); border-bottom:2px solid var(--deere-yellow); padding-bottom:3px; margin:16px 0 8px;}
+  .rep-header{display:flex; align-items:center; gap:14px; border-bottom:3px solid var(--deere-green); padding-bottom:10px;}
+  .rep-header img{width:54px; height:54px; border-radius:50%;}
+  .rep-title{flex:1;}
+  .rep-title h1{margin:0; font-size:20px; color:var(--deere-green-dark);}
+  .rep-title div{font-size:12px; color:var(--ink-soft);}
+  .rep-fecha{text-align:right; font-size:11.5px; color:var(--ink-soft); line-height:1.45;}
+  .rep-fecha b{color:var(--ink); font-size:13px;}
+  .rep-estado{display:inline-block; margin-top:3px; font-size:10px; font-weight:800; letter-spacing:.5px; padding:2px 8px; border-radius:5px; background:var(--green-bg); color:var(--deere-green-dark);}
+  .rep-estado.borrador{background:var(--orange-bg); color:var(--orange);}
+  .rep-kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:12px;}
+  .rep-kpi{border:1px solid var(--line); border-radius:8px; padding:9px 12px; border-left:5px solid var(--line);}
+  .rep-kpi .k{font-size:10.5px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.3px;}
+  .rep-kpi .v{font-size:22px; font-weight:800; color:var(--ink);}
+  .rep-kpi .s{font-size:10.5px; color:var(--ink-soft);}
+  .rep-kpi.sem-verde{border-left-color:#2FA968;} .rep-kpi.sem-amarillo{border-left-color:#E0A800;} .rep-kpi.sem-rojo{border-left-color:#C23B3B;} .rep-kpi.sem-gris{border-left-color:#B8B3A3;}
+  .rep-matriz, .rep-lista{width:100%; border-collapse:collapse; font-size:11.5px;}
+  .rep-matriz th, .rep-lista th{background:var(--deere-green-dark); color:white; font-size:10.5px; padding:6px; letter-spacing:.3px;}
+  .rep-matriz td, .rep-lista td{border:1px solid #E4DFD2; padding:5px 6px; text-align:center;}
+  .rep-matriz .l, .rep-lista .l{text-align:left;}
+  .rep-matriz td.tot{border-left:3px solid var(--deere-green-dark);}
+  .rep-cell-real{font-size:15px; font-weight:800;}
+  .rep-cell-prog{font-size:10px; color:#555;}
+  td.sem-verde{background:#E3F3E8;} td.sem-amarillo{background:#FFF4CC;} td.sem-rojo{background:#FBE1E1;} td.sem-gris{background:#F3F1EA;}
+  .rep-leyenda{display:flex; flex-wrap:wrap; gap:14px; font-size:10.5px; color:var(--ink-soft); margin-top:6px; align-items:center;}
+  .rep-leyenda i{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:4px; vertical-align:-1px; border:1px solid #D5D0C0;}
+  .rep-leyenda i.sem-verde{background:#E3F3E8;} .rep-leyenda i.sem-amarillo{background:#FFF4CC;} .rep-leyenda i.sem-rojo{background:#FBE1E1;} .rep-leyenda i.sem-gris{background:#F3F1EA;}
+  .rep-nota{font-size:10.5px; color:var(--ink-soft);}
+  .rep-delta{font-size:10px; font-weight:800; padding:0 4px; border-radius:4px; margin-left:2px;}
+  .rep-delta.up{color:#1E7B45; background:#DDF1E4;} .rep-delta.down{color:var(--red); background:var(--red-bg);} .rep-delta.eq{color:#777; background:#EEE;}
+  .rep-kpi .rep-delta{font-size:12px; vertical-align:middle;}
+  .rep-h2-nota{font-size:10.5px; text-transform:none; letter-spacing:0; color:var(--ink-soft); font-weight:400;}
+  .rep-rojo{color:var(--red); font-weight:800;}
+  .rep-ok{font-size:12px; color:var(--deere-green-dark); font-weight:600; padding:4px 0;}
+  .rep-2col{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+  .rep-crit{list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:5px;}
+  .rep-crit li{font-size:11.5px; line-height:1.4;}
+  .rep-crit .tag{font-size:9.5px; font-weight:800; padding:1px 6px; border-radius:4px; text-transform:uppercase; margin-right:4px;}
+  #rep-coment{width:100%; min-height:110px; border:1px dashed var(--deere-green); border-radius:6px; padding:8px; font-family:inherit; font-size:12px; resize:vertical; background:#FFFEF8;}
+  .rep-coment-print{display:none;}
+  .rep-coment-fijo{font-size:12px; line-height:1.5; white-space:normal;}
+  .rep-gantt{position:relative; font-size:10.5px;}
+  .rg-head, .rg-row{display:flex; align-items:center; gap:0;}
+  .rg-lbl{width:110px; flex-shrink:0; padding-left:10px; color:#444;}
+  .rg-track{position:relative; flex:1; height:10px;}
+  .rg-head .rg-track{height:18px; background:var(--deere-green); border-radius:4px;}
+  .rg-mes{position:absolute; top:0; height:100%; color:white; font-weight:800; font-size:10px; text-align:center; line-height:18px; border-left:1px solid rgba(255,255,255,.35);}
+  .rg-val{width:50px; text-align:right; font-weight:800;}
+  .rg-proj{font-weight:800; margin:4px 0 1px; font-size:11px; color:var(--deere-green-dark);}
+  .rg-row{margin:1px 0;}
+  .rg-row .rg-track{background:repeating-linear-gradient(90deg, #F4F2EA 0, #F4F2EA calc(100% - 1px), #E6E2D6 calc(100% - 1px), #E6E2D6 100%);}
+  .rg-fuera span{position:absolute; left:6px; font-size:9.5px; color:var(--ink-soft); line-height:10px;}
+  .hero-ha input{width:52px; border:none; background:transparent; font:inherit; color:inherit; text-align:right; padding:0;}
+  .hero-ha input:focus{outline:1px dashed var(--deere-green-dark);}
+  .gantt-week-head.anio2027{background:#E8F0D8;}
+  .rg-bar{position:absolute; top:1px; bottom:1px; border-radius:3px; overflow:hidden; opacity:.45;}
+  .rg-bar .rg-fill{height:100%; background:rgba(0,0,0,.55);}
+  .rg-bar.terrenos{background:#FFD500; opacity:1;} .rg-bar.terrenos .rg-fill{background:#B39400;}
+  .rg-bar.conducciones{background:#9FDDBB; opacity:1;} .rg-bar.conducciones .rg-fill{background:#1E8A50;}
+  .rg-bar.riego{background:#EBC199; opacity:1;} .rg-bar.riego .rg-fill{background:#A3601F;}
+  .rg-bar.estructuras{background:#A9CDEA; opacity:1;} .rg-bar.estructuras .rg-fill{background:#1F6A9E;}
+  .rg-now{position:absolute; top:0; bottom:0; width:0; border-left:2px solid var(--red);}
+  .rg-now span{position:absolute; top:-14px; left:-22px; font-size:9.5px; font-weight:800; color:var(--red); white-space:nowrap;}
+  @media (max-width: 800px){ .rep-kpis{grid-template-columns:1fr 1fr;} .rep-2col{grid-template-columns:1fr;} }
+
+  @page{ size: letter landscape; margin: 10mm; }
+  @media print{
+    body{background:white !important;}
+    .wrap > *:not(#sheet-reporte){display:none !important;}
+    #sheet-reporte{display:block !important;}
+    .no-print{display:none !important;}
+    .wrap{max-width:none; padding:0; margin:0;}
+    .rep-page{border:none; box-shadow:none; border-radius:0; padding:0; margin:0; max-width:none; page-break-after:always; break-after:page;}
+    .rep-page:last-child{page-break-after:auto; break-after:auto;}
+    .rep-page h2{margin:10px 0 6px;}
+    .rep-lista tr{break-inside:avoid;}
+    .rep-lista td{padding:3px 6px;}
+    .rep-matriz td{padding:3px 6px;}
+    .rep-cell-real{font-size:13px;}
+    .rep-kpis{margin-top:8px;}
+    .rep-kpi{padding:6px 10px;}
+    .rep-kpi .v{font-size:19px;}
+    #rep-coment{min-height:0;}
+    .rep-header{padding-bottom:6px;}
+    #rep-coment{display:none;}
+    .rep-coment-print{display:block; font-size:12px; line-height:1.5;}
+    *{-webkit-print-color-adjust:exact; print-color-adjust:exact;}
+  }
+  @media (max-width: 800px){ .sub-cards{grid-template-columns:1fr 1fr;} }
+  @media (max-width: 1100px){ .resumen-grid.proj{grid-template-columns: repeat(3,1fr);} }
+  @media (max-width: 700px){ .resumen-grid.proj, .kpis-top{grid-template-columns: 1fr 1fr;} }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top-actions" style="display:none">
+    <span class="top-actions-note" id="globalSaveNote">Guardado automático activo — usa "Guardar todo ahora" si quieres asegurarlo manualmente</span>
+    <button class="btn btn-save" id="saveAllBtn">Guardar todo ahora</button>
+    <button class="btn btn-sheets" id="exportSheetsBtn">Exportar a Google Sheets (.xlsx)</button>
+    <button class="btn btn-export" id="exportBtn">Exportar datos (respaldo .json)</button>
+    <button class="btn btn-export" id="importBtn">Importar datos</button>
+    <input type="file" id="importInput" class="import-input" accept="application/json">
+  </div>
+
+  <div class="top-actions" id="sheetsBar" style="border-top:1px dashed var(--line); margin-top:6px; padding-top:8px;">
+    <span class="top-actions-note" id="sheetsStatus">🔌 Sin conexión a Google Sheets — trabajando con datos locales</span>
+    <input type="text" id="sheetsUrlInput" placeholder="Pega aquí el link de tu Apps Script Web App" style="flex:1; min-width:260px; padding:6px 10px; border:1px solid var(--line); border-radius:6px; font-size:12px;">
+    <button class="btn btn-sheets" id="sheetsConnectBtn">🔗 Conectar</button>
+    <button class="btn btn-save" id="sheetsRefreshBtn">🔄 Actualizar</button>
+    <button class="btn btn-primary" id="saveHtmlBtn" title="Descarga una copia de la app con los datos de hoy">💾 Guardar HTML</button>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-sheet="resumen">📊 Resumen</button>
+    <button class="tab-btn" data-sheet="mj6">🌱 Plantación MJ6</button>
+    <button class="tab-btn" data-sheet="mj7">🌱 Plantación MJ7</button>
+    <button class="tab-btn" data-sheet="mj8">🌱 Plantación MJ8</button>
+    <button class="tab-btn" data-sheet="mj1">🔁 Replante MJ1</button>
+    <button class="tab-btn" data-sheet="mj3">🔁 Replante MJ3</button>
+    <button class="tab-btn" data-sheet="mj8r">🔁 Replante MJ8</button>
+    <button class="tab-btn" data-sheet="reporte">📄 Reporte Directorio</button>
+  </div>
+
+  <!-- ===================== RESUMEN ===================== -->
+  <div class="sheet active" id="sheet-resumen">
+    <div class="hero">
+      <div class="hero-title">
+        <img class="hero-logo" src="data:image/webp;base64,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" alt="Molina Quality">
+        <div>
+          <h1>Plantación y Replante 2027</h1>
+          <p>Avance general de los proyectos — <span id="rs-semana"></span></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="kpis-top">
+      <div class="kpi-box"><div class="k-label">Hectáreas totales</div><div class="k-val" id="rs-ha-total">—</div></div>
+      <div class="kpi-box"><div class="k-label" id="rs-lbl-plant">Plantación</div><div class="k-val" id="rs-ha-plant">—</div></div>
+      <div class="kpi-box"><div class="k-label" id="rs-lbl-repl">Replante</div><div class="k-val" id="rs-ha-repl">—</div></div>
+      <div class="kpi-box"><div class="k-label">Avance global (ponderado por ha)</div><div class="k-val" id="rs-avance">—</div></div>
+    </div>
+
+    <div class="resumen-grid proj" id="rs-proyectos"></div>
+
+    <div class="atencion-panel">
+      <h3>⚠️ Puntos de atención</h3>
+      <ul class="atencion-list" id="rs-atencion"></ul>
+
+      <div class="at-man-head">
+        <h4>Puntos de atención registrados</h4>
+        <label class="at-man-toggle"><input type="checkbox" id="at-verResueltos"> Ver resueltos</label>
+      </div>
+      <div class="at-form">
+        <select id="at-proy"></select>
+        <select id="at-nivel">
+          <option value="red">Crítico</option>
+          <option value="orange" selected="">Atención</option>
+        </select>
+        <input type="text" id="at-texto" placeholder="Describe el punto de atención">
+        <input type="text" id="at-resp" placeholder="Responsable" style="max-width:160px;">
+        <button class="btn btn-primary" id="at-addBtn">+ Agregar</button>
+      </div>
+      <ul class="atencion-list" id="at-manual"></ul>
+      <div class="save-note" id="at-saveNote"></div>
+    </div>
+  </div>
+
+  <!-- ===================== REPORTE DIRECTORIO ===================== -->
+  <div class="sheet" id="sheet-reporte">
+    <div class="rep-controls no-print">
+      <label>Reporte
+        <select id="rep-select"></select>
+      </label>
+      <label>Emitido por
+        <input type="text" id="rep-emisor" placeholder="Nombre y cargo">
+      </label>
+      <button class="btn btn-save" id="rep-emitirBtn" title="Guarda una foto de los números de hoy; el siguiente reporte se compara contra ella">Emitir reporte</button>
+      <button class="btn btn-primary" id="rep-printBtn">Imprimir / Guardar PDF</button>
+      <span class="save-note" id="rep-saveNote"></span>
+    </div>
+    <div class="rep-help no-print" id="rep-help"></div>
+    <div id="rep-doc"></div>
+  </div>
+
+  <div id="proj-sheets"></div>
+
+</div>
+
+<script>
+// Copia del HTML original (sin datos) para el botón Guardar HTML
+const HTML_ORIGINAL = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+// Datos incrustados al usar 'Guardar HTML' (null = archivo base)
+const DATOS_EMBEBIDOS = {"guardado":"2026-10-10T15:07:59.214Z","proyectos":{"mj6":{"items":[{"sub":"terrenos","labor":"Liberacion de predios","resp":"Luis Espriu","ini":41,"fin":46,"meta":29,"avance":0,"id":1},{"sub":"terrenos","labor":"Desmontes","resp":"Luis Espriu","ini":43,"fin":47,"meta":29,"avance":0,"id":2},{"sub":"terrenos","labor":"Deslomes-Nivelacion","resp":"Luis Espriu","ini":44,"fin":48,"meta":29,"avance":0,"id":3},{"sub":"terrenos","labor":"Subsolado cruzado","resp":"Luis Espriu","ini":45,"fin":48,"meta":29,"avance":0,"id":4},{"sub":"terrenos","labor":"Rastraje","resp":"Luis Espriu","ini":45,"fin":48,"meta":29,"avance":0,"id":5},{"sub":"terrenos","labor":"Zurcado GPS","resp":"Luis Espriu","ini":45,"fin":48,"meta":29,"avance":0,"id":6},{"sub":"terrenos","labor":"Surcado D7","resp":"Luis Espriu","ini":45,"fin":48,"meta":29,"avance":0,"id":7},{"sub":"terrenos","labor":"Caminos","resp":"Luis Espriu","ini":45,"fin":48,"meta":29,"avance":0,"id":8},{"sub":"conducciones","labor":"Trazo lineas prim-sec.","resp":"Luis Espriu","ini":44,"fin":46,"meta":29,"avance":60,"id":9},{"sub":"conducciones","labor":"Excavaciones","resp":"Luis Espriu","ini":46,"fin":48,"meta":29,"avance":60,"id":10},{"sub":"conducciones","labor":"Atraques","resp":"Luis Espriu","ini":46,"fin":48,"meta":29,"avance":60,"id":11},{"sub":"conducciones","labor":"Tapado lineas","resp":"Luis Espriu","ini":46,"fin":48,"meta":29,"avance":60,"id":12},{"sub":"riego","labor":"Levantamiento topografico","resp":"Martin Gonzalez","ini":43,"fin":46,"meta":29,"avance":0,"id":13},{"sub":"riego","labor":"Diseño agronomico","resp":"Martin Gonzalez","ini":43,"fin":46,"meta":29,"avance":0,"id":14},{"sub":"riego","labor":"Diseño hidraulico","resp":"Martin Gonzalez","ini":43,"fin":46,"meta":29,"avance":0,"id":15},{"sub":"riego","labor":"Gestion de materiales","resp":"Martin Gonzalez","ini":43,"fin":44,"meta":29,"avance":0,"id":16},{"sub":"riego","labor":"Replanteo sistema de riego","resp":"Martin Gonzalez","ini":43,"fin":43,"meta":29,"avance":0,"id":17},{"sub":"riego","labor":"Instalacion prim-sec.","resp":"Martin Gonzalez","ini":47,"fin":49,"meta":29,"avance":0,"id":18},{"sub":"riego","labor":"Automatizacion de sistemas","resp":"Martin Gonzalez","ini":51,"fin":53,"meta":29,"avance":0,"id":19},{"sub":"riego","labor":"Tanques de almacenaje","resp":"Martin Gonzalez","ini":51,"fin":53,"meta":29,"avance":0,"id":20},{"sub":"riego","labor":"Instalaciones electricas","resp":"Martin Gonzalez","ini":51,"fin":53,"meta":29,"avance":0,"id":21},{"sub":"estructuras","labor":"Gestion de materiales","resp":"Luis Espriu","ini":48,"fin":52,"meta":29,"avance":100,"id":22},{"sub":"estructuras","labor":"Tutor interior","resp":"Luis Espriu","ini":48,"fin":52,"meta":29,"avance":0,"id":23},{"sub":"estructuras","labor":"Anclas","resp":"Luis Espriu","ini":48,"fin":52,"meta":29,"avance":0,"id":24},{"sub":"estructuras","labor":"Tutor cabecera","resp":"Luis Espriu","ini":48,"fin":52,"meta":29,"avance":0,"id":25},{"sub":"estructuras","labor":"Alambre entrene","resp":"Luis Espriu","ini":48,"fin":52,"meta":29,"avance":0,"id":26}],"idCounter":27,"ha":29},"mj7":{"items":[{"sub":"terrenos","labor":"Liberacion de predios","resp":"Luis Espriu","ini":28,"fin":40,"meta":58,"avance":100,"id":1},{"sub":"terrenos","labor":"Desmontes","resp":"Luis Espriu","ini":25,"fin":27,"meta":58,"avance":100,"id":2},{"sub":"terrenos","labor":"Deslomes-Nivelacion","resp":"Luis Espriu","ini":26,"fin":33,"meta":58,"avance":100,"id":3},{"sub":"terrenos","labor":"Subsolado cruzado","resp":"Luis Espriu","ini":27,"fin":40,"meta":58,"avance":100,"id":4},{"sub":"terrenos","labor":"Rastraje","resp":"Luis Espriu","ini":28,"fin":31,"meta":58,"avance":100,"id":5},{"sub":"terrenos","labor":"Zurcado GPS","resp":"Luis Espriu","ini":29,"fin":40,"meta":58,"avance":100,"id":6},{"sub":"terrenos","labor":"Surcado D7","resp":"Luis Espriu","ini":30,"fin":42,"meta":58,"avance":100,"id":7},{"sub":"terrenos","labor":"Caminos","resp":"Luis Espriu","ini":41,"fin":45,"meta":58,"avance":100,"id":8},{"sub":"conducciones","labor":"Trazo lineas prim-sec.","resp":"Luis Espriu","ini":29,"fin":31,"meta":58,"avance":25,"id":9},{"sub":"conducciones","labor":"Excavaciones","resp":"Luis Espriu","ini":31,"fin":44,"meta":58,"avance":10,"id":10},{"sub":"conducciones","labor":"Atraques","resp":"Luis Espriu","ini":32,"fin":40,"meta":58,"avance":"","id":11},{"sub":"conducciones","labor":"Tapado lineas","resp":"Luis Espriu","ini":32,"fin":44,"meta":58,"avance":"","id":12},{"sub":"riego","labor":"Levantamiento topografico","resp":"Martin Gonzalez","ini":36,"fin":42,"meta":58,"avance":100,"id":13},{"sub":"riego","labor":"Diseño agronomico","resp":"Martin Gonzalez","ini":36,"fin":42,"meta":58,"avance":100,"id":14},{"sub":"riego","labor":"Diseño hidraulico","resp":"Martin Gonzalez","ini":36,"fin":42,"meta":58,"avance":100,"id":15},{"sub":"riego","labor":"Gestion de materiales","resp":"Martin Gonzalez","ini":36,"fin":40,"meta":58,"avance":100,"id":16},{"sub":"riego","labor":"Replanteo sistema de riego","resp":"Martin Gonzalez","ini":41,"fin":42,"meta":58,"avance":100,"id":17},{"sub":"riego","labor":"Instalacion prim-sec.","resp":"Martin Gonzalez","ini":38,"fin":46,"meta":58,"avance":10,"id":18},{"sub":"riego","labor":"Automatizacion de sistemas","resp":"Martin Gonzalez","ini":48,"fin":51,"meta":58,"avance":0,"id":19},{"sub":"riego","labor":"Tanques de almacenaje","resp":"Martin Gonzalez","ini":48,"fin":51,"meta":58,"avance":0,"id":20},{"sub":"riego","labor":"Instalaciones electricas","resp":"Martin Gonzalez","ini":48,"fin":51,"meta":58,"avance":0,"id":21},{"sub":"estructuras","labor":"Gestion de materiales","resp":"Luis Espriu","ini":36,"fin":40,"meta":58,"avance":100,"id":22},{"sub":"estructuras","labor":"Tutor interior","resp":"Luis Espriu","ini":43,"fin":48,"meta":58,"avance":"","id":23},{"sub":"estructuras","labor":"Anclas","resp":"Luis Espriu","ini":43,"fin":48,"meta":58,"avance":"","id":24},{"sub":"estructuras","labor":"Tutor cabecera","resp":"Luis Espriu","ini":43,"fin":48,"meta":58,"avance":"","id":25},{"sub":"estructuras","labor":"Alambre entrene","resp":"Luis Espriu","ini":48,"fin":53,"meta":58,"avance":"","id":26}],"idCounter":27,"ha":58},"mj8":{"items":[{"sub":"terrenos","labor":"Liberacion de predios","resp":"Luis Espriu","ini":36,"fin":46,"meta":87,"avance":70,"id":1},{"sub":"terrenos","labor":"Desmontes","resp":"Luis Espriu","ini":41,"fin":48,"meta":87,"avance":40,"id":2},{"sub":"terrenos","labor":"Deslomes-Nivelacion","resp":"Luis Espriu","ini":43,"fin":48,"meta":87,"avance":10,"id":3},{"sub":"terrenos","labor":"Subsolado cruzado","resp":"Luis Espriu","ini":44,"fin":48,"meta":87,"avance":"","id":4},{"sub":"terrenos","labor":"Rastraje","resp":"Luis Espriu","ini":45,"fin":48,"meta":87,"avance":"","id":5},{"sub":"terrenos","labor":"Zurcado GPS","resp":"Luis Espriu","ini":45,"fin":48,"meta":87,"avance":"","id":6},{"sub":"terrenos","labor":"Surcado D7","resp":"Luis Espriu","ini":45,"fin":48,"meta":87,"avance":"","id":7},{"sub":"terrenos","labor":"Caminos","resp":"Luis Espriu","ini":45,"fin":48,"meta":87,"avance":"","id":8},{"sub":"conducciones","labor":"Trazo lineas prim-sec.","resp":"Luis Espriu","ini":45,"fin":50,"meta":87,"avance":0,"id":9},{"sub":"conducciones","labor":"Excavaciones","resp":"Luis Espriu","ini":45,"fin":50,"meta":87,"avance":0,"id":10},{"sub":"conducciones","labor":"Atraques","resp":"Luis Espriu","ini":45,"fin":50,"meta":87,"avance":0,"id":11},{"sub":"conducciones","labor":"Tapado lineas","resp":"Luis Espriu","ini":45,"fin":50,"meta":87,"avance":0,"id":12},{"sub":"riego","labor":"Levantamiento topografico","resp":"Martin Gonzalez","ini":36,"fin":44,"meta":87,"avance":100,"id":13},{"sub":"riego","labor":"Diseño agronomico","resp":"Martin Gonzalez","ini":36,"fin":44,"meta":87,"avance":100,"id":14},{"sub":"riego","labor":"Diseño hidraulico","resp":"Martin Gonzalez","ini":36,"fin":44,"meta":87,"avance":100,"id":15},{"sub":"riego","labor":"Gestion de materiales","resp":"Martin Gonzalez","ini":36,"fin":44,"meta":87,"avance":100,"id":16},{"sub":"riego","labor":"Replanteo sistema de riego","resp":"Martin Gonzalez","ini":42,"fin":44,"meta":87,"avance":100,"id":17},{"sub":"riego","labor":"Instalacion prim-sec.","resp":"Martin Gonzalez","ini":43,"fin":48,"meta":87,"avance":0,"id":18},{"sub":"riego","labor":"Automatizacion de sistemas","resp":"Martin Gonzalez","ini":43,"fin":48,"meta":87,"avance":0,"id":19},{"sub":"riego","labor":"Tanques de almacenaje","resp":"Martin Gonzalez","ini":43,"fin":48,"meta":87,"avance":0,"id":20},{"sub":"riego","labor":"Instalaciones electricas","resp":"Martin Gonzalez","ini":43,"fin":48,"meta":87,"avance":0,"id":21},{"sub":"estructuras","labor":"Gestion de materiales","resp":"Luis Espriu","ini":26,"fin":27,"meta":87,"avance":"","id":22},{"sub":"estructuras","labor":"Tutor interior","resp":"Luis Espriu","ini":32,"fin":48,"meta":87,"avance":"","id":23},{"sub":"estructuras","labor":"Anclas","resp":"Luis Espriu","ini":32,"fin":48,"meta":87,"avance":"","id":24},{"sub":"estructuras","labor":"Tutor cabecera","resp":"Luis Espriu","ini":32,"fin":48,"meta":87,"avance":"","id":25},{"sub":"estructuras","labor":"Alambre entrene","resp":"Luis Espriu","ini":32,"fin":48,"meta":87,"avance":"","id":26}],"idCounter":27,"ha":87},"mj1":{"items":[{"sub":"terrenos","labor":"Liberacion de predios","resp":"Luis Espriu","ini":43,"fin":44,"meta":26,"avance":100,"id":1},{"sub":"terrenos","labor":"Desmontes","resp":"Luis Espriu","ini":43,"fin":44,"meta":26,"avance":100,"id":2},{"sub":"terrenos","labor":"Deslomes-Nivelacion","resp":"Luis Espriu","ini":43,"fin":33,"meta":26,"avance":10,"id":3},{"sub":"terrenos","labor":"Subsolado cruzado","resp":"Luis Espriu","ini":43,"fin":44,"meta":26,"avance":0,"id":4},{"sub":"terrenos","labor":"Rastraje","resp":"Luis Espriu","ini":43,"fin":44,"meta":26,"avance":0,"id":5},{"sub":"terrenos","labor":"Zurcado GPS","resp":"Luis Espriu","ini":43,"fin":44,"meta":26,"avance":0,"id":6},{"sub":"terrenos","labor":"Surcado D7","resp":"Luis Espriu","ini":43,"fin":44,"meta":26,"avance":0,"id":7},{"sub":"terrenos","labor":"Caminos","resp":"Luis Espriu","ini":43,"fin":44,"meta":26,"avance":0,"id":8},{"sub":"conducciones","labor":"Trazo lineas prim-sec.","resp":"Luis Espriu","ini":43,"fin":44,"meta":26,"avance":100,"id":9},{"sub":"conducciones","labor":"Excavaciones","resp":"Luis Espriu","ini":43,"fin":44,"meta":26,"avance":100,"id":10},{"sub":"conducciones","labor":"Atraques","resp":"Luis Espriu","ini":43,"fin":44,"meta":26,"avance":100,"id":11},{"sub":"conducciones","labor":"Tapado lineas","resp":"Luis Espriu","ini":43,"fin":44,"meta":26,"avance":100,"id":12},{"sub":"riego","labor":"Levantamiento topografico","resp":"Martin Gonzalez","ini":43,"fin":27,"meta":26,"avance":100,"id":13},{"sub":"riego","labor":"Diseño agronomico","resp":"Martin Gonzalez","ini":43,"fin":27,"meta":26,"avance":100,"id":14},{"sub":"riego","labor":"Diseño hidraulico","resp":"Martin Gonzalez","ini":25,"fin":27,"meta":26,"avance":100,"id":15},{"sub":"riego","labor":"Gestion de materiales","resp":"Martin Gonzalez","ini":25,"fin":28,"meta":26,"avance":100,"id":16},{"sub":"riego","labor":"Replanteo sistema de riego","resp":"Martin Gonzalez","ini":25,"fin":32,"meta":26,"avance":100,"id":17},{"sub":"riego","labor":"Instalacion prim-sec.","resp":"Martin Gonzalez","ini":32,"fin":48,"meta":26,"avance":100,"id":18},{"sub":"riego","labor":"Automatizacion de sistemas","resp":"Martin Gonzalez","ini":32,"fin":48,"meta":26,"avance":100,"id":19},{"sub":"riego","labor":"Tanques de almacenaje","resp":"Martin Gonzalez","ini":32,"fin":48,"meta":26,"avance":100,"id":20},{"sub":"riego","labor":"Instalaciones electricas","resp":"Martin Gonzalez","ini":32,"fin":48,"meta":26,"avance":100,"id":21},{"sub":"estructuras","labor":"Gestion de materiales","resp":"Luis Espriu","ini":100,"fin":27,"meta":26,"avance":100,"id":22},{"sub":"estructuras","labor":"Tutor interior","resp":"Luis Espriu","ini":46,"fin":48,"meta":26,"avance":0,"id":23},{"sub":"estructuras","labor":"Anclas","resp":"Luis Espriu","ini":46,"fin":48,"meta":26,"avance":0,"id":24},{"sub":"estructuras","labor":"Tutor cabecera","resp":"Luis Espriu","ini":46,"fin":48,"meta":26,"avance":0,"id":25},{"sub":"estructuras","labor":"Alambre entrene","resp":"Luis Espriu","ini":46,"fin":48,"meta":26,"avance":0,"id":26}],"idCounter":28,"ha":26},"mj3":{"items":[{"sub":"terrenos","labor":"Liberacion de predios","resp":"Luis Espriu","ini":43,"fin":46,"meta":15,"avance":100,"id":1},{"sub":"terrenos","labor":"Desmontes","resp":"Luis Espriu","ini":43,"fin":46,"meta":15,"avance":100,"id":2},{"sub":"terrenos","labor":"Deslomes-Nivelacion","resp":"Luis Espriu","ini":43,"fin":46,"meta":15,"avance":100,"id":3},{"sub":"terrenos","labor":"Subsolado cruzado","resp":"Luis Espriu","ini":43,"fin":46,"meta":15,"avance":0,"id":4},{"sub":"terrenos","labor":"Rastraje","resp":"Luis Espriu","ini":43,"fin":46,"meta":15,"avance":0,"id":5},{"sub":"terrenos","labor":"Zurcado GPS","resp":"Luis Espriu","ini":43,"fin":46,"meta":15,"avance":0,"id":6},{"sub":"terrenos","labor":"Surcado D7","resp":"Luis Espriu","ini":43,"fin":46,"meta":15,"avance":0,"id":7},{"sub":"terrenos","labor":"Caminos","resp":"Luis Espriu","ini":43,"fin":46,"meta":15,"avance":100,"id":8},{"sub":"conducciones","labor":"Trazo lineas prim-sec.","resp":"Luis Espriu","ini":41,"fin":42,"meta":15,"avance":100,"id":9},{"sub":"conducciones","labor":"Excavaciones","resp":"Luis Espriu","ini":41,"fin":42,"meta":15,"avance":100,"id":10},{"sub":"conducciones","labor":"Atraques","resp":"Luis Espriu","ini":41,"fin":42,"meta":15,"avance":100,"id":11},{"sub":"conducciones","labor":"Tapado lineas","resp":"Luis Espriu","ini":41,"fin":42,"meta":15,"avance":100,"id":12},{"sub":"riego","labor":"Levantamiento topografico","resp":"Martin Gonzalez","ini":36,"fin":40,"meta":15,"avance":100,"id":13},{"sub":"riego","labor":"Diseño agronomico","resp":"Martin Gonzalez","ini":36,"fin":40,"meta":15,"avance":100,"id":14},{"sub":"riego","labor":"Diseño hidraulico","resp":"Martin Gonzalez","ini":36,"fin":40,"meta":15,"avance":100,"id":15},{"sub":"riego","labor":"Gestion de materiales","resp":"Martin Gonzalez","ini":36,"fin":40,"meta":15,"avance":100,"id":16},{"sub":"riego","labor":"Replanteo sistema de riego","resp":"Martin Gonzalez","ini":36,"fin":40,"meta":15,"avance":100,"id":17},{"sub":"riego","labor":"Instalacion prim-sec.","resp":"Martin Gonzalez","ini":36,"fin":40,"meta":15,"avance":100,"id":18},{"sub":"riego","labor":"Automatizacion de sistemas","resp":"Martin Gonzalez","ini":36,"fin":40,"meta":15,"avance":100,"id":19},{"sub":"riego","labor":"Tanques de almacenaje","resp":"Martin Gonzalez","ini":36,"fin":40,"meta":15,"avance":100,"id":20},{"sub":"riego","labor":"Instalaciones electricas","resp":"Martin Gonzalez","ini":36,"fin":40,"meta":15,"avance":100,"id":21},{"sub":"estructuras","labor":"Gestion de materiales","resp":"Luis Espriu","ini":43,"fin":46,"meta":15,"avance":100,"id":22},{"sub":"estructuras","labor":"Tutor interior","resp":"Luis Espriu","ini":43,"fin":46,"meta":15,"avance":0,"id":23},{"sub":"estructuras","labor":"Anclas","resp":"Luis Espriu","ini":43,"fin":46,"meta":15,"avance":0,"id":24},{"sub":"estructuras","labor":"Tutor cabecera","resp":"Luis Espriu","ini":43,"fin":46,"meta":15,"avance":0,"id":25},{"sub":"estructuras","labor":"Alambre entrene","resp":"Luis Espriu","ini":43,"fin":46,"meta":15,"avance":0,"id":26}],"idCounter":27,"ha":15},"mj8r":{"items":[{"sub":"terrenos","labor":"Liberacion de predios","resp":"Luis Espriu","ini":36,"fin":36,"meta":43,"avance":100,"id":1},{"sub":"terrenos","labor":"Desmontes","resp":"Luis Espriu","ini":36,"fin":36,"meta":43,"avance":100,"id":2},{"sub":"terrenos","labor":"Deslomes-Nivelacion","resp":"Luis Espriu","ini":36,"fin":36,"meta":43,"avance":100,"id":3},{"sub":"terrenos","labor":"Subsolado cruzado","resp":"Luis Espriu","ini":36,"fin":36,"meta":43,"avance":100,"id":4},{"sub":"terrenos","labor":"Rastraje","resp":"Luis Espriu","ini":42,"fin":44,"meta":43,"avance":0,"id":5},{"sub":"terrenos","labor":"Zurcado GPS","resp":"Luis Espriu","ini":42,"fin":44,"meta":43,"avance":0,"id":6},{"sub":"terrenos","labor":"Surcado D7","resp":"Luis Espriu","ini":42,"fin":44,"meta":43,"avance":0,"id":7},{"sub":"terrenos","labor":"Caminos","resp":"Luis Espriu","ini":36,"fin":36,"meta":43,"avance":100,"id":8},{"sub":"conducciones","labor":"Trazo lineas prim-sec.","resp":"Luis Espriu","ini":36,"fin":36,"meta":43,"avance":100,"id":9},{"sub":"conducciones","labor":"Excavaciones","resp":"Luis Espriu","ini":36,"fin":36,"meta":43,"avance":100,"id":10},{"sub":"conducciones","labor":"Atraques","resp":"Luis Espriu","ini":36,"fin":36,"meta":43,"avance":100,"id":11},{"sub":"conducciones","labor":"Tapado lineas","resp":"Luis Espriu","ini":36,"fin":36,"meta":43,"avance":100,"id":12},{"sub":"riego","labor":"Levantamiento topografico","resp":"Martin Gonzalez","ini":36,"fin":36,"meta":43,"avance":100,"id":13},{"sub":"riego","labor":"Diseño agronomico","resp":"Martin Gonzalez","ini":36,"fin":36,"meta":43,"avance":100,"id":14},{"sub":"riego","labor":"Diseño hidraulico","resp":"Martin Gonzalez","ini":36,"fin":36,"meta":43,"avance":100,"id":15},{"sub":"riego","labor":"Gestion de materiales","resp":"Martin Gonzalez","ini":36,"fin":36,"meta":43,"avance":100,"id":16},{"sub":"riego","labor":"Replanteo sistema de riego","resp":"Martin Gonzalez","ini":36,"fin":36,"meta":43,"avance":100,"id":17},{"sub":"riego","labor":"Instalacion prim-sec.","resp":"Martin Gonzalez","ini":36,"fin":36,"meta":43,"avance":100,"id":18},{"sub":"riego","labor":"Automatizacion de sistemas","resp":"Martin Gonzalez","ini":36,"fin":36,"meta":43,"avance":100,"id":19},{"sub":"riego","labor":"Tanques de almacenaje","resp":"Martin Gonzalez","ini":36,"fin":36,"meta":43,"avance":100,"id":20},{"sub":"riego","labor":"Instalaciones electricas","resp":"Martin Gonzalez","ini":36,"fin":36,"meta":43,"avance":100,"id":21},{"sub":"estructuras","labor":"Gestion de materiales","resp":"Luis Espriu","ini":26,"fin":27,"meta":43,"avance":100,"id":22},{"sub":"estructuras","labor":"Tutor interior","resp":"Luis Espriu","ini":41,"fin":46,"meta":43,"avance":20,"id":23},{"sub":"estructuras","labor":"Anclas","resp":"Luis Espriu","ini":43,"fin":46,"meta":43,"avance":0,"id":24},{"sub":"estructuras","labor":"Tutor cabecera","resp":"Luis Espriu","ini":43,"fin":46,"meta":43,"avance":0,"id":25},{"sub":"estructuras","labor":"Alambre entrene","resp":"Luis Espriu","ini":43,"fin":46,"meta":43,"avance":0,"id":26}],"idCounter":27,"ha":43}},"atencion":{"items":[],"idCounter":1},"reportes":{"reportes":[],"borrador":{"comentarios":"","emisor":"Guillermo Maascareño Mezzano"}}};
+/* ============ GUARDADO DOBLE (Claude + navegador) ============
+   Cada guardado se escribe en DOS lugares al mismo tiempo:
+   1) window.storage (sistema de Claude, si está disponible)
+   2) localStorage del navegador (respaldo local, siempre)
+   Al cargar, se comparan las marcas de tiempo y se usa la más reciente.
+   Esto evita perder cambios si uno de los dos falla o no persiste. */
+const LS_PREFIX = 'control_operaciones_jalisco__';
+const SHEETS_URL_KEY = LS_PREFIX + 'sheets_api_url';
+
+// Link de Apps Script incorporado por defecto: así cualquiera que abra el sitio
+// (sin importar el navegador o dispositivo) queda conectado automáticamente,
+// sin tener que pegar el link a mano. Si algún día cambias de Sheet, solo
+// reemplaza esta URL y vuelve a subir el archivo a GitHub.
+const DEFAULT_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyhzL69b1htm-KEQjV5MRadwHD4cy58qFHTStCuEqBWWfs03ZIBa_XJOvnDzygCdJywIg/exec';
+
+/* ============ CONEXIÓN A GOOGLE SHEETS (base compartida entre todos los usuarios del link) ============
+   Funciona con un Google Apps Script Web App desplegado sobre un Google Sheet, que actúa
+   como almacén clave-valor (mismo esquema que window.storage), igual para todos los que
+   entren con el mismo link — así todos ven y editan la misma información en tiempo real. */
+function getSheetsUrl(){
+  const guardado = (localStorage.getItem(SHEETS_URL_KEY) || '').trim();
+  return guardado || DEFAULT_SHEETS_URL;
+}
+function setSheetsUrl(url){
+  localStorage.setItem(SHEETS_URL_KEY, (url||'').trim());
+}
+
+async function sheetsGet(key){
+  const url = getSheetsUrl();
+  if(!url) return null;
+  try{
+    const res = await fetch(`${url}?key=${encodeURIComponent(key)}`, {method:'GET'});
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const json = await res.json();
+    if(json && json.value) return JSON.parse(json.value);
+    return null;
+  }catch(e){
+    console.warn('sheetsGet falló:', e);
+    return null;
+  }
+}
+
+async function sheetsSet(key, dataObj){
+  const url = getSheetsUrl();
+  if(!url) return false;
+  try{
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {'Content-Type': 'text/plain;charset=utf-8'}, // evita preflight CORS con Apps Script
+      body: JSON.stringify({ key, value: JSON.stringify(dataObj) })
+    });
+    const json = await res.json();
+    return !!(json && json.ok);
+  }catch(e){
+    console.warn('sheetsSet falló:', e);
+    return false;
+  }
+}
+
+function updateSheetsStatus(state){
+  const el = document.getElementById('sheetsStatus');
+  if(!el) return;
+  if(state === 'conectado'){
+    el.textContent = '🟢 Conectado a Google Sheets — datos compartidos con todos los que usan este link';
+  } else if(state === 'conectando'){
+    el.textContent = '🟡 Conectando con Google Sheets...';
+  } else if(state === 'error'){
+    el.textContent = '🔴 No se pudo conectar al link de Google Sheets — revisa que sea correcto y esté publicado';
+  } else {
+    el.textContent = '🔌 Sin conexión a Google Sheets — trabajando con datos locales';
+  }
+}
+
+async function recargarTodo(){
+  await Promise.all([...PROYECTOS.map(p=>p.load()), loadAtencion(), loadReportes()]);
+  renderResumen();
+}
+
+document.getElementById('sheetsUrlInput').value = getSheetsUrl();
+
+async function probarConexionSheets(){
+  const val = getSheetsUrl();
+  if(!val){
+    updateSheetsStatus('desconectado');
+    return false;
+  }
+  updateSheetsStatus('conectando');
+  try{
+    const res = await fetch(`${val}?key=__ping__`);
+    if(!res.ok) throw new Error('sin respuesta');
+    updateSheetsStatus('conectado');
+    return true;
+  }catch(e){
+    updateSheetsStatus('error');
+    return false;
+  }
+}
+
+document.getElementById('sheetsConnectBtn').addEventListener('click', async ()=>{
+  const val = document.getElementById('sheetsUrlInput').value.trim();
+  setSheetsUrl(val);
+  const ok = await probarConexionSheets();
+  if(ok) await recargarTodo();
+});
+
+document.getElementById('sheetsRefreshBtn').addEventListener('click', async ()=>{
+  await probarConexionSheets();
+  await recargarTodo();
+});
+
+// Verifica la conexión apenas carga la página, usando el link por defecto o el guardado
+probarConexionSheets();
+
+async function dualGet(key){
+  // 1) Google Sheets (fuente compartida entre todos, si está configurada)
+  try{
+    const fromSheets = await sheetsGet(key);
+    if(fromSheets) return fromSheets;
+  }catch(e){ /* seguimos con las demás fuentes */ }
+
+  let fromCloud = null, fromLocal = null;
+
+  try{
+    if(typeof window.storage !== 'undefined'){
+      const r = await window.storage.get(key, true); // true = dato compartido entre todos los usuarios del link
+      if(r && r.value) fromCloud = JSON.parse(r.value);
+    }
+  }catch(e){ /* sin datos en la nube, seguimos con local */ }
+
+  try{
+    const raw = localStorage.getItem(LS_PREFIX + key);
+    if(raw) fromLocal = JSON.parse(raw);
+  }catch(e){ /* sin datos locales */ }
+
+  if(fromCloud && fromLocal){
+    return (fromCloud.savedAt||0) >= (fromLocal.savedAt||0) ? fromCloud : fromLocal;
+  }
+  return fromCloud || fromLocal || null;
+}
+
+async function dualSet(key, dataObj){
+  dataObj.savedAt = Date.now();
+  const str = JSON.stringify(dataObj);
+  let cloudOk = false;
+
+  try{
+    if(getSheetsUrl()){
+      const ok = await sheetsSet(key, dataObj);
+      if(ok) cloudOk = true;
+    }
+  }catch(e){ /* falló Sheets, seguimos con las demás */ }
+
+  try{
+    if(typeof window.storage !== 'undefined'){
+      await window.storage.set(key, str, true); // true = dato compartido entre todos los usuarios del link
+      cloudOk = true;
+    }
+  }catch(e){ /* falló guardado en la nube, seguimos con local */ }
+  try{
+    localStorage.setItem(LS_PREFIX + key, str);
+  }catch(e){ /* localStorage no disponible (raro) */ }
+  return cloudOk;
+}
+
+/* ============ TABS ============ */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('sheet-'+btn.dataset.sheet).classList.add('active');
+  });
+});
+
+function escapeHtml(str){
+  return (str||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* ============================================================
+   NOTAS DESPLEGABLES (botón 📝 en cada fila, todas las hojas)
+   ============================================================ */
+const notesOpen = {};
+
+function notesButtonHtml(sheetKey, id){
+  const isOpen = notesOpen[sheetKey].has(id);
+  return `<button class="notes-btn ${isOpen?'active':''}" data-notes-sheet="${sheetKey}" data-notes-id="${id}" title="Observaciones">📝</button>`;
+}
+
+function notesRowHtml(colspan, value){
+  return `<tr class="notes-row"><td colspan="${colspan}">
+    <div class="notes-box">
+      <label>📝 Observaciones</label>
+      <textarea data-notas-field>${escapeHtml(value||'')}</textarea>
+    </div>
+  </td></tr>`;
+}
+
+function wireNotesButton(btn, sheetKey, id, record, saveFn, renderFn){
+  btn.addEventListener('click', ()=>{
+    if(notesOpen[sheetKey].has(id)) notesOpen[sheetKey].delete(id);
+    else notesOpen[sheetKey].add(id);
+    renderFn();
+  });
+}
+
+function wireNotesRow(notesTr, record, field, saveFn){
+  const ta = notesTr.querySelector('[data-notas-field]');
+  const commit = ()=>{ record[field] = ta.value; saveFn(); };
+  ta.addEventListener('blur', commit);
+  ta.addEventListener('change', commit);
+}
+
+/* ============================================================
+   PROYECTOS: cada uno con su propio Gantt y su propia clave de guardado
+   ============================================================ */
+const SUBPROY = [
+  {value:"terrenos", label:"TERRENOS"},
+  {value:"conducciones", label:"CONDUCCIÓN"},
+  {value:"riego", label:"RIEGO"},
+  {value:"estructuras", label:"ESTRUCTURA"},
+];
+// Semanas "continuas": 2026 tiene 53 semanas ISO; enero 2027 (sem 1-4) se guarda como 54-57
+// para que el orden sea correcto. En pantalla siempre se muestra la semana real (1-4).
+const SEMANAS_2026 = 53;
+const WEEK_START = 36;
+const WEEK_END = 57;
+const MESES_PL = [
+  {label:"SEPTIEMBRE", from:36, to:40},
+  {label:"OCTUBRE", from:41, to:44},
+  {label:"NOVIEMBRE", from:45, to:48},
+  {label:"DICIEMBRE", from:49, to:53},
+  {label:"ENERO", from:54, to:57},
+];
+// Semana continua -> semana que ve el usuario
+function semLbl(w){ return (w==null || w==='') ? '' : (w > SEMANAS_2026 ? w - SEMANAS_2026 : w); }
+// Semana que captura el usuario -> semana continua (1 a 22 se interpreta como 2027)
+function semDesdeInput(v){ if(v==null || v==='') return null; v = Number(v); return v <= 22 ? v + SEMANAS_2026 : v; }
+
+// Semana ISO actual (para marcar "hoy" en el Gantt y detectar atrasos)
+function isoWeek(d){
+  const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  const day = t.getUTCDay() || 7;
+  t.setUTCDate(t.getUTCDate() + 4 - day);
+  const y0 = new Date(Date.UTC(t.getUTCFullYear(),0,1));
+  return Math.ceil(((t - y0) / 86400000 + 1) / 7);
+}
+const SEMANA_ACTUAL = (()=>{ const d = new Date(); const w = isoWeek(d);
+  // en enero 2027 (o semana 1 ISO que cae en dic) se pasa a semana continua
+  return (d.getFullYear() >= 2027 && w < 30) ? w + SEMANAS_2026 : w; })();
+
+// Labores base (mismas del proyecto Plantación 2027). La cantidad se toma de las ha de cada proyecto.
+const LABORES_BASE = [
+  {sub:"terrenos", labor:"Liberacion de predios", resp:"Luis Espriu", ini:null, fin:null},
+  {sub:"terrenos", labor:"Desmontes", resp:"Luis Espriu", ini:23, fin:27},
+  {sub:"terrenos", labor:"Deslomes-Nivelacion", resp:"Luis Espriu", ini:25, fin:33},
+  {sub:"terrenos", labor:"Subsolado cruzado", resp:"Luis Espriu", ini:26, fin:40},
+  {sub:"terrenos", labor:"Rastraje", resp:"Luis Espriu", ini:27, fin:31},
+  {sub:"terrenos", labor:"Zurcado GPS", resp:"Luis Espriu", ini:29, fin:40},
+  {sub:"terrenos", labor:"Surcado D7", resp:"Luis Espriu", ini:30, fin:45},
+  {sub:"terrenos", labor:"Caminos", resp:"Luis Espriu", ini:32, fin:48},
+  {sub:"conducciones", labor:"Trazo lineas prim-sec.", resp:"Luis Espriu", ini:29, fin:31},
+  {sub:"conducciones", labor:"Excavaciones", resp:"Luis Espriu", ini:31, fin:44},
+  {sub:"conducciones", labor:"Atraques", resp:"Luis Espriu", ini:32, fin:40},
+  {sub:"conducciones", labor:"Tapado lineas", resp:"Luis Espriu", ini:32, fin:44},
+  {sub:"riego", labor:"Levantamiento topografico", resp:"Martin Gonzalez", ini:25, fin:27},
+  {sub:"riego", labor:"Diseño agronomico", resp:"Martin Gonzalez", ini:25, fin:27},
+  {sub:"riego", labor:"Diseño hidraulico", resp:"Martin Gonzalez", ini:25, fin:27},
+  {sub:"riego", labor:"Gestion de materiales", resp:"Martin Gonzalez", ini:25, fin:28},
+  {sub:"riego", labor:"Replanteo sistema de riego", resp:"Martin Gonzalez", ini:25, fin:32},
+  {sub:"riego", labor:"Instalacion prim-sec.", resp:"Martin Gonzalez", ini:32, fin:48},
+  {sub:"riego", labor:"Automatizacion de sistemas", resp:"Martin Gonzalez", ini:32, fin:48},
+  {sub:"riego", labor:"Tanques de almacenaje", resp:"Martin Gonzalez", ini:32, fin:48},
+  {sub:"riego", labor:"Instalaciones electricas", resp:"Martin Gonzalez", ini:32, fin:48},
+  {sub:"estructuras", labor:"Gestion de materiales", resp:"Luis Espriu", ini:26, fin:27},
+  {sub:"estructuras", labor:"Tutor interior", resp:"Luis Espriu", ini:32, fin:48},
+  {sub:"estructuras", labor:"Anclas", resp:"Luis Espriu", ini:32, fin:48},
+  {sub:"estructuras", labor:"Tutor cabecera", resp:"Luis Espriu", ini:32, fin:48},
+  {sub:"estructuras", labor:"Alambre entrene", resp:"Luis Espriu", ini:32, fin:48},
+];
+
+const PROYECTOS_CFG = [
+  {id:'mj6', campo:'MJ6', tipo:'plantacion', ha:29},
+  {id:'mj7', campo:'MJ7', tipo:'plantacion', ha:58},
+  {id:'mj8', campo:'MJ8', tipo:'plantacion', ha:87},
+  {id:'mj1', campo:'MJ1', tipo:'replante', ha:26},
+  {id:'mj3', campo:'MJ3', tipo:'replante', ha:15},
+  {id:'mj8r', campo:'MJ8', tipo:'replante', ha:43},
+];
+const TIPO_LABEL = {plantacion:'Plantación', replante:'Replante'};
+
+function avanceProyecto(items){
+  if(!items.length) return 0;
+  return Math.round(items.reduce((s,p)=>s+(Number(p.avance)||0),0)/items.length);
+}
+
+function crearProyecto(cfg){
+  const P = {
+    ...cfg,
+    nombre: `${TIPO_LABEL[cfg.tipo]} ${cfg.campo}`,
+    key: `plant27-${cfg.id}-data`,
+    items: [],
+    idCounter: 1,
+    saveTimeout: null,
+    abiertos: new Set(),   // sub-proyectos desplegados en el Gantt (por defecto todos contraídos)
+  };
+  notesOpen[cfg.id] = new Set();
+  const subLabel = (v)=> (SUBPROY.find(s=>s.value===v)||{label:v}).label;
+  const $ = (s)=>document.getElementById(`${cfg.id}-${s}`);
+
+  // ---- HTML de la hoja ----
+  const sheet = document.createElement('div');
+  sheet.className = 'sheet';
+  sheet.id = 'sheet-' + cfg.id;
+  sheet.innerHTML = `
+    <div class="hero">
+      <div class="hero-title">
+        <img class="hero-logo" src="${document.querySelector('.hero-logo').src}" alt="Molina Quality">
+        <div>
+          <h1>${P.nombre} <span class="hero-ha" title="Clic para editar las hectáreas"><input type="number" min="0" step="0.1" id="${cfg.id}-ha" value="${cfg.ha||''}" placeholder="?"> ha</span></h1>
+          <p>Hoja de ruta de labores por sub-proyecto — septiembre 2026 a enero 2027 · <span id="${cfg.id}-avanceTxt"></span></p>
+        </div>
+      </div>
+    </div>
+    <div class="sub-cards" id="${cfg.id}-subCards"></div>
+    <div class="toolbar">
+      <select id="${cfg.id}-filterSub">
+        <option value="">Todos los sub-proyectos</option>
+        ${SUBPROY.map(s=>`<option value="${s.value}">${s.label.charAt(0)+s.label.slice(1).toLowerCase()}</option>`).join('')}
+      </select>
+      <input type="text" id="${cfg.id}-searchBox" placeholder="Buscar labor o responsable">
+      <button class="btn btn-clear" id="${cfg.id}-clearBtn">✕ Limpiar</button>
+      <button class="btn btn-clear" id="${cfg.id}-toggleAll">▸ Ver actividades</button>
+      <button class="btn btn-primary" id="${cfg.id}-addBtn">+ Nueva labor</button>
+      <div class="count-pill" id="${cfg.id}-countPill">0 labores</div>
+    </div>
+    <div class="gantt-wrap">
+      <table class="gantt">
+        <thead id="${cfg.id}-thead"></thead>
+        <tbody id="${cfg.id}-tbody"></tbody>
+      </table>
+    </div>
+    <div class="save-note" id="${cfg.id}-saveNote"></div>`;
+  document.getElementById('proj-sheets').appendChild(sheet);
+
+  P.seed = ()=> LABORES_BASE.map(l=>({...l, meta:P.ha, avance:""}));
+
+  P.load = async ()=>{
+    try{
+      let parsed = await dualGet(P.key);
+      let desdeEmbebido = false;
+      if(!parsed && DATOS_EMBEBIDOS && DATOS_EMBEBIDOS.proyectos && DATOS_EMBEBIDOS.proyectos[P.id]){
+        parsed = DATOS_EMBEBIDOS.proyectos[P.id]; desdeEmbebido = true;
+      }
+      if(parsed){ P.items = parsed.items || []; P.idCounter = parsed.idCounter || (P.items.length+1); if(parsed.ha) P.ha = Number(parsed.ha); }
+      else { P.items = []; }
+      // Si el proyecto se guardó sin hectáreas, completa la cantidad de sus labores con las ha actuales
+      if(parsed && !Number(parsed.ha) && P.ha){ P.items.forEach(l=>{ if(!Number(l.meta)) l.meta = P.ha; }); desdeEmbebido = true; }
+      $('ha').value = P.ha || '';
+      if(desdeEmbebido) await P.save();
+    }catch(e){ P.items = []; }
+    // Fusiona labores base que aún no existan (por sub-proyecto + actividad), sin tocar las existentes.
+    const existentes = new Set(P.items.map(p=>`${(p.sub||'').trim().toUpperCase()}|${(p.labor||'').trim().toUpperCase()}`));
+    let agregados = 0;
+    // Solo se siembra la primera vez (si el proyecto nunca se ha guardado), para respetar labores borradas.
+    if(!P.items.length && !P._seeded){
+      P.seed().forEach(s=>{
+        const clave = `${s.sub.toUpperCase()}|${s.labor.toUpperCase()}`;
+        if(!existentes.has(clave)){ P.items.push({...s, id:P.idCounter++}); existentes.add(clave); agregados++; }
+      });
+    }
+    P._seeded = true;
+    if(agregados > 0) await P.save();
+    P.renderHead();
+    P.render();
+    renderResumen();
+  };
+
+  P.save = async ()=>{
+    try{
+      const cloudOk = await dualSet(P.key, {items:P.items, idCounter:P.idCounter, ha:P.ha});
+      const note = $('saveNote');
+      note.textContent = cloudOk ? 'Guardado ✓' : 'Guardado ✓ (local)';
+      clearTimeout(P.saveTimeout);
+      P.saveTimeout = setTimeout(()=>{note.textContent='';}, 1500);
+    }catch(e){
+      console.error('Error guardando '+P.nombre, e);
+      $('saveNote').textContent = '⚠ No se pudo guardar';
+    }
+    renderResumen();
+  };
+
+  P.renderHead = ()=>{
+    let monthRow = `<tr>
+      <th class="gantt-info-head" rowspan="2" style="width:95px;">SUB-PROYECTO</th>
+      <th class="gantt-info-head gantt-labor-head" rowspan="2">ACTIVIDAD</th>
+      <th class="gantt-info-head" rowspan="2" style="width:100px;">RESPONSABLE</th>
+      <th class="gantt-info-head" rowspan="2" style="width:55px;">CANTIDAD<br>(ha)</th>
+      <th class="gantt-info-head" rowspan="2" style="width:60px;">% AVANCE</th>
+      <th class="gantt-info-head" rowspan="2" style="width:55px;">SEMANA<br>INICIO</th>
+      <th class="gantt-info-head" rowspan="2" style="width:55px;">SEMANA<br>TÉRMINO</th>`;
+    MESES_PL.forEach(m=>{ monthRow += `<th class="gantt-month-head" colspan="${m.to-m.from+1}">${m.label}</th>`; });
+    monthRow += `<th class="gantt-info-head" rowspan="2" style="width:30px;"></th></tr>`;
+    let weekRow = `<tr>`;
+    for(let w=WEEK_START; w<=WEEK_END; w++){
+      weekRow += `<th class="gantt-week-head ${w===SEMANA_ACTUAL?'now':''} ${w>SEMANAS_2026?'anio2027':''}" ${w===SEMANA_ACTUAL?'title="Semana actual"':''}>${semLbl(w)}</th>`;
+    }
+    $('thead').innerHTML = monthRow + weekRow + `</tr>`;
+  };
+
+  P.render = ()=>{
+    const filterSub = $('filterSub').value;
+    const search = $('searchBox').value.trim().toLowerCase();
+    const filtered = P.items.filter(p=>{
+      if(filterSub && p.sub !== filterSub) return false;
+      if(search && !(`${p.labor} ${p.resp}`.toLowerCase().includes(search))) return false;
+      return true;
+    });
+    $('countPill').textContent = `${filtered.length} de ${P.items.length} labores`;
+    $('avanceTxt').textContent = `${avanceProyecto(P.items)}% de avance`;
+    P.renderSubCards();
+    const todosAbiertos = SUBPROY.every(s=>P.abiertos.has(s.value));
+    $('toggleAll').textContent = todosAbiertos ? '▾ Solo sub-proyectos' : '▸ Ver actividades';
+    const tbody = $('tbody');
+    tbody.innerHTML = '';
+    const totalCols = 7 + (WEEK_END - WEEK_START + 1) + 1;
+    if(filtered.length === 0){
+      tbody.innerHTML = `<tr class="empty-row"><td colspan="${totalCols}">No hay labores que coincidan con el filtro.</td></tr>`;
+      return;
+    }
+    const buscando = !!search;
+    SUBPROY.forEach(sp=>{
+      const grupo = filtered.filter(p=>p.sub===sp.value);
+      if(!grupo.length) return;
+      const abierto = buscando || P.abiertos.has(sp.value);
+      const todasGrupo = P.items.filter(p=>p.sub===sp.value);
+      const av = avanceProyecto(todasGrupo);
+      const inis = todasGrupo.map(p=>p.ini).filter(v=>v!=null), fins = todasGrupo.map(p=>p.fin).filter(v=>v!=null);
+      const gIni = inis.length?Math.min(...inis):null, gFin = fins.length?Math.max(...fins):null;
+      const atr = todasGrupo.filter(p=>estadoLabor(p)==='atrasada').length;
+      let gCells='';
+      for(let w=WEEK_START; w<=WEEK_END; w++){
+        const f = gIni!=null && gFin!=null && w>=gIni && w<=gFin;
+        gCells += `<td class="gantt-week-cell grp ${f?('filled '+sp.value):''} ${w===SEMANA_ACTUAL?'now':''}"></td>`;
+      }
+      const gtr = document.createElement('tr');
+      gtr.className = 'grp-row';
+      gtr.innerHTML = `
+        <td class="gantt-sub ${sp.value}" style="font-size:11px;">${abierto?'▾':'▸'} ${sp.label}</td>
+        <td class="grp-labor">${todasGrupo.length} actividades${atr?` · <span class="grp-atr">${atr} atrasada${atr===1?'':'s'}</span>`:''}</td>
+        <td></td>
+        <td class="grp-num">${P.ha||'—'}</td>
+        <td class="grp-num"><div class="grp-av"><div class="mini-prog"><div style="width:${av}%"></div></div><b>${av}%</b></div></td>
+        <td class="grp-num">${gIni!=null?semLbl(gIni):'—'}</td>
+        <td class="grp-num">${gFin!=null?semLbl(gFin):'—'}</td>
+        ${gCells}
+        <td></td>`;
+      gtr.addEventListener('click', ()=>{
+        if(P.abiertos.has(sp.value)) P.abiertos.delete(sp.value); else P.abiertos.add(sp.value);
+        P.render();
+      });
+      tbody.appendChild(gtr);
+      if(!abierto) return;
+    grupo.forEach(p=>{
+      const tr = document.createElement('tr');
+      let weekCells = '';
+      for(let w=WEEK_START; w<=WEEK_END; w++){
+        const filled = p.ini!=null && p.fin!=null && w>=p.ini && w<=p.fin;
+        weekCells += `<td class="gantt-week-cell ${filled?('filled '+p.sub):''} ${w===SEMANA_ACTUAL?'now':''}" data-week="${w}" title="Semana ${semLbl(w)} — clic para marcar inicio/fin"></td>`;
+      }
+      tr.innerHTML = `
+        <td class="gantt-sub ${p.sub}">
+          <select class="gantt-sub-select" data-field="sub">
+            ${SUBPROY.map(s=>`<option value="${s.value}" ${s.value===p.sub?'selected':''}>${s.label}</option>`).join('')}
+          </select>
+        </td>
+        <td class="gantt-labor"><input data-field="labor" style="width:${ganttLaborWidth(p.labor)}" value="${escapeHtml(p.labor)}" placeholder="Actividad"></td>
+        <td class="gantt-resp"><input data-field="resp" value="${escapeHtml(p.resp)}" placeholder="Responsable"></td>
+        <td class="gantt-num"><input type="number" data-field="meta" value="${p.meta!=null?p.meta:''}"></td>
+        <td class="gantt-num"><input type="number" min="0" max="100" data-field="avance" value="${p.avance!=null?p.avance:''}" placeholder="%"></td>
+        <td class="gantt-range-cell"><input type="number" min="1" max="53" data-field="ini" value="${semLbl(p.ini)}" title="Semana de inicio (1 a 4 = enero 2027)"></td>
+        <td class="gantt-range-cell"><input type="number" min="1" max="53" data-field="fin" value="${semLbl(p.fin)}" title="Semana de término (1 a 4 = enero 2027)"></td>
+        ${weekCells}
+        <td class="actions-cell">${notesButtonHtml(cfg.id, p.id)}<button class="gantt-del" title="Eliminar">🗑</button></td>`;
+
+      tr.querySelectorAll('[data-field]').forEach(el=>{
+        const field = el.dataset.field;
+        const commit = ()=>{
+          let val = el.value;
+          if(['meta','avance'].includes(field)) val = val === '' ? null : Number(val);
+          if(['ini','fin'].includes(field)) val = semDesdeInput(val);
+          if(p[field] === val) return;
+          p[field] = val;
+          P.save(); P.render();
+        };
+        el.addEventListener('change', commit);
+        if(el.tagName !== 'SELECT') el.addEventListener('blur', commit);
+        if(field === 'labor') el.addEventListener('input', ()=>{ el.style.width = ganttLaborWidth(el.value); });
+      });
+
+      tr.querySelectorAll('.gantt-week-cell').forEach(cell=>{
+        cell.addEventListener('click', ()=>{
+          const week = Number(cell.dataset.week);
+          if(p.ini == null){ p.ini = week; p.fin = null; }
+          else if(p.fin == null){ if(week >= p.ini){ p.fin = week; } else { p.fin = p.ini; p.ini = week; } }
+          else { p.ini = week; p.fin = null; }
+          P.save(); P.render();
+        });
+      });
+
+      tr.querySelector('.gantt-del').addEventListener('click', ()=>{
+        if(!confirm(`¿Eliminar la labor "${p.labor||'(sin nombre)'}" de ${P.nombre}?`)) return;
+        P.items = P.items.filter(x=>x.id !== p.id);
+        P.save(); P.render();
+      });
+
+      tr.querySelector('.notes-btn').addEventListener('click', ()=>{
+        if(notesOpen[cfg.id].has(p.id)) notesOpen[cfg.id].delete(p.id); else notesOpen[cfg.id].add(p.id);
+        P.render();
+      });
+
+      tbody.appendChild(tr);
+      if(notesOpen[cfg.id].has(p.id)){
+        const notesTr = document.createElement('tr');
+        notesTr.innerHTML = notesRowHtml(totalCols, p.notas);
+        wireNotesRow(notesTr, p, 'notas', P.save);
+        tbody.appendChild(notesTr);
+      }
+    });
+    });
+  };
+
+  // Tarjetas de los 4 sub-proyectos: avance y clic para filtrar sus actividades
+  P.renderSubCards = ()=>{
+    const actual = $('filterSub').value;
+    $('subCards').innerHTML = SUBPROY.map(sp=>{
+      const items = P.items.filter(p=>p.sub===sp.value);
+      const av = avanceProyecto(items);
+      const c = {completada:0, encurso:0, atrasada:0, porIniciar:0};
+      items.forEach(l=>c[estadoLabor(l)]++);
+      return `<div class="sub-card ${sp.value} ${actual===sp.value?'sel':''}" data-sub="${sp.value}" title="Clic para ver solo las actividades de ${sp.label}">
+        <div class="sub-card-top"><span class="sub-card-name">${sp.label}</span><span class="sub-card-av">${av}%</span></div>
+        <div class="prog"><div style="width:${av}%"></div></div>
+        <div class="sub-card-meta">${items.length} act. · ${c.completada} compl. · ${c.encurso} en curso${c.atrasada?` · <span class="grp-atr">${c.atrasada} atras.</span>`:''}</div>
+      </div>`;
+    }).join('');
+    $('subCards').querySelectorAll('.sub-card').forEach(el=>{
+      el.addEventListener('click', ()=>{
+        const v = el.dataset.sub;
+        if($('filterSub').value === v){ $('filterSub').value=''; P.abiertos.clear(); }
+        else { $('filterSub').value = v; P.abiertos.add(v); }
+        P.render();
+      });
+    });
+  };
+
+  $('ha').addEventListener('change', ()=>{
+    const nuevo = Number($('ha').value) || 0;
+    const anterior = P.ha;
+    // actualiza la cantidad de las labores que tenían las ha anteriores
+    P.items.forEach(l=>{ if(l.meta==null || Number(l.meta)===Number(anterior)) l.meta = nuevo; });
+    P.ha = nuevo;
+    P.save(); P.render();
+  });
+
+  $('addBtn').addEventListener('click', ()=>{
+    const subNuevo = $('filterSub').value || "terrenos";
+    P.abiertos.add(subNuevo);
+    P.items.push({id:P.idCounter++, sub:subNuevo, labor:"", resp:"", meta:P.ha, avance:"", ini:null, fin:null});
+    P.save(); P.render();
+  });
+  $('clearBtn').addEventListener('click', ()=>{ $('searchBox').value=''; $('filterSub').value=''; P.abiertos.clear(); P.render(); });
+  $('toggleAll').addEventListener('click', ()=>{
+    if(SUBPROY.every(s=>P.abiertos.has(s.value))) P.abiertos.clear();
+    else SUBPROY.forEach(s=>P.abiertos.add(s.value));
+    P.render();
+  });
+  $('searchBox').addEventListener('input', P.render);
+  $('filterSub').addEventListener('change', ()=>{
+    const v = $('filterSub').value;
+    if(v) P.abiertos.add(v);
+    P.render();
+  });
+  return P;
+}
+
+function ganttLaborWidth(text){
+  const len = (text||'').length;
+  return Math.min(45, Math.max(12, len + 2)) + 'ch';
+}
+
+const PROYECTOS = PROYECTOS_CFG.map(crearProyecto);
+
+/* ============================================================
+   RESUMEN
+   ============================================================ */
+function estadoLabor(p){
+  const av = Number(p.avance)||0;
+  if(av >= 100) return 'completada';
+  if(p.fin != null && p.fin < SEMANA_ACTUAL) return 'atrasada';
+  if(p.ini != null && p.ini <= SEMANA_ACTUAL) return 'encurso';
+  return 'porIniciar';
+}
+
+function renderResumen(){
+  document.getElementById('rs-semana').textContent = `semana ${semLbl(SEMANA_ACTUAL)}`;
+  document.getElementById('rs-lbl-plant').textContent = `Plantación (${PROYECTOS.filter(p=>p.tipo==='plantacion').map(p=>p.campo).join(' · ')})`;
+  document.getElementById('rs-lbl-repl').textContent = `Replante (${PROYECTOS.filter(p=>p.tipo==='replante').map(p=>p.campo).join(' · ')})`;
+  const sumHa = (arr)=>arr.reduce((s,p)=>s+p.ha,0);
+  const plant = PROYECTOS.filter(p=>p.tipo==='plantacion');
+  const repl = PROYECTOS.filter(p=>p.tipo==='replante');
+  const haTotal = sumHa(PROYECTOS);
+  document.getElementById('rs-ha-total').textContent = `${haTotal} ha`;
+  document.getElementById('rs-ha-plant').textContent = `${sumHa(plant)} ha`;
+  document.getElementById('rs-ha-repl').textContent = `${sumHa(repl)} ha`;
+  const pond = haTotal ? Math.round(PROYECTOS.reduce((s,p)=>s+avanceProyecto(p.items)*p.ha,0)/haTotal) : 0;
+  document.getElementById('rs-avance').textContent = `${pond}%`;
+
+  const atencion = [];
+  document.getElementById('rs-proyectos').innerHTML = PROYECTOS.map(P=>{
+    const c = {completada:0, encurso:0, atrasada:0, porIniciar:0};
+    P.items.forEach(l=>{
+      const e = estadoLabor(l); c[e]++;
+    });
+    const atr = P.items.filter(l=>estadoLabor(l)==='atrasada');
+    if(atr.length) atencion.push({tag:'red', texto:`${P.nombre} — ${atr.length} labor${atr.length===1?'':'es'} atrasada${atr.length===1?'':'s'}: ${atr.map(l=>`${l.labor||'(sin nombre)'} (sem ${semLbl(l.fin)}, ${Number(l.avance)||0}%)`).join(' · ')}`});
+    const av = avanceProyecto(P.items);
+    return `<div class="resumen-panel clickable" data-go="${P.id}">
+      <h3>${P.campo} <span class="proj-tag ${P.tipo}">${TIPO_LABEL[P.tipo]}</span></h3>
+      <div class="resumen-total">${P.ha} ha · ${P.items.length} labores</div>
+      <div class="prog"><div style="width:${av}%"></div></div>
+      ${statRow('', 'green', 'Avance total', av+'%')}
+      ${SUBPROY.map(sp=>{
+        const a = avanceProyecto(P.items.filter(l=>l.sub===sp.value));
+        return `<div class="rs-sub"><span>${sp.label}</span><div class="mini-prog"><div class="${sp.value}" style="width:${a}%"></div></div><b>${a}%</b></div>`;
+      }).join('')}
+      <div class="resumen-total" style="margin:8px 0 0;">${c.completada} compl. · ${c.encurso} en curso · ${c.atrasada?`<span class="grp-atr">${c.atrasada} atrasadas</span>`:'0 atrasadas'}</div>
+    </div>`;
+  }).join('');
+  document.querySelectorAll('#rs-proyectos [data-go]').forEach(el=>{
+    el.addEventListener('click', ()=>document.querySelector(`.tab-btn[data-sheet="${el.dataset.go}"]`).click());
+  });
+
+  const atencionEl = document.getElementById('rs-atencion');
+  atencionEl.innerHTML = atencion.length === 0
+    ? `<div class="atencion-none">✓ No hay labores atrasadas por ahora.</div>`
+    : atencion.map(a=>`<li class="atencion-item"><span class="tag tag-${a.tag}">Atrasada</span><span>${escapeHtml(a.texto)}</span></li>`).join('');
+}
+
+function statRow(colorClass, dot, label, value){
+  return `<div class="resumen-stat-row">
+    <div class="resumen-stat-label"><span class="dot ${dot}" style="width:9px;height:9px;"></span>${label}</div>
+    <div class="resumen-stat-value ${colorClass}">${value}</div>
+  </div>`;
+}
+
+
+/* ============================================================
+   PUNTOS DE ATENCIÓN EDITABLES (registrados a mano, compartidos)
+   ============================================================ */
+const AT_KEY = 'plant27-atencion-data';
+let atencionManual = [];
+let atIdCounter = 1;
+let atSaveTimeout;
+
+function atProyLabel(v){
+  if(!v) return 'General';
+  const P = PROYECTOS.find(p=>p.id===v);
+  return P ? P.nombre : v;
+}
+
+async function loadAtencion(){
+  try{
+    let d = await dualGet(AT_KEY);
+    if(!d && DATOS_EMBEBIDOS && DATOS_EMBEBIDOS.atencion){ d = DATOS_EMBEBIDOS.atencion; atencionManual = d.items||[]; atIdCounter = d.idCounter||1; saveAtencion(); }
+    atencionManual = (d && d.items) || [];
+    atIdCounter = (d && d.idCounter) || (atencionManual.length+1);
+  }catch(e){ atencionManual = []; }
+  renderAtencionManual();
+}
+
+async function saveAtencion(){
+  try{
+    const ok = await dualSet(AT_KEY, {items:atencionManual, idCounter:atIdCounter});
+    const note = document.getElementById('at-saveNote');
+    note.textContent = ok ? 'Guardado ✓' : 'Guardado ✓ (local)';
+    clearTimeout(atSaveTimeout);
+    atSaveTimeout = setTimeout(()=>{note.textContent='';}, 1500);
+  }catch(e){
+    document.getElementById('at-saveNote').textContent = '⚠ No se pudo guardar';
+  }
+}
+
+function renderAtencionManual(){
+  const verRes = document.getElementById('at-verResueltos').checked;
+  const lista = atencionManual
+    .filter(a=>verRes || !a.resuelto)
+    .sort((a,b)=>(a.resuelto?1:0)-(b.resuelto?1:0) || (a.nivel==='red'?0:1)-(b.nivel==='red'?0:1));
+  const ul = document.getElementById('at-manual');
+  if(!lista.length){
+    ul.innerHTML = `<div class="resumen-empty">${atencionManual.length ? 'No hay puntos pendientes.' : 'Aún no hay puntos registrados. Agrega uno arriba.'}</div>`;
+    return;
+  }
+  const opcionesProy = (sel)=>[['', 'General'], ...PROYECTOS.map(p=>[p.id, p.nombre])]
+    .map(([v,l])=>`<option value="${v}" ${v===(sel||'')?'selected':''}>${l}</option>`).join('');
+  ul.innerHTML = lista.map(a=>`
+    <li class="atencion-item at-man ${a.resuelto?'resuelto':''}" data-id="${a.id}">
+      <select class="at-nivel-sel tag tag-${a.nivel}" data-f="nivel">
+        <option value="red" ${a.nivel==='red'?'selected':''}>CRÍTICO</option>
+        <option value="orange" ${a.nivel!=='red'?'selected':''}>ATENCIÓN</option>
+      </select>
+      <select class="at-proy-sel" data-f="proy">${opcionesProy(a.proy)}</select>
+      <input class="at-txt" data-f="texto" value="${escapeHtml(a.texto)}" placeholder="Descripción">
+      <input class="at-rsp" data-f="resp" value="${escapeHtml(a.resp)}" placeholder="Responsable">
+      <span class="at-fecha" title="Fecha de registro">${a.fecha||''}</span>
+      <label class="at-chk" title="Marcar como resuelto"><input type="checkbox" data-f="resuelto" ${a.resuelto?'checked':''}> Resuelto</label>
+      <button class="gantt-del" title="Eliminar">🗑</button>
+    </li>`).join('');
+  ul.querySelectorAll('li[data-id]').forEach(li=>{
+    const a = atencionManual.find(x=>x.id===Number(li.dataset.id));
+    li.querySelectorAll('[data-f]').forEach(el=>{
+      const f = el.dataset.f;
+      const commit = ()=>{
+        const val = el.type==='checkbox' ? el.checked : el.value;
+        if(a[f] === val) return;
+        a[f] = val;
+        saveAtencion();
+        if(f!=='texto' && f!=='resp') renderAtencionManual();
+      };
+      el.addEventListener('change', commit);
+      if(el.tagName==='INPUT' && el.type!=='checkbox') el.addEventListener('blur', commit);
+    });
+    li.querySelector('.gantt-del').addEventListener('click', ()=>{
+      if(!confirm('¿Eliminar este punto de atención?')) return;
+      atencionManual = atencionManual.filter(x=>x.id!==a.id);
+      saveAtencion(); renderAtencionManual();
+    });
+  });
+}
+
+document.getElementById('at-proy').innerHTML = [['', 'General'], ...PROYECTOS.map(p=>[p.id, p.nombre])]
+  .map(([v,l])=>`<option value="${v}">${l}</option>`).join('');
+function agregarAtencion(){
+  const txt = document.getElementById('at-texto');
+  if(!txt.value.trim()){ txt.focus(); return; }
+  atencionManual.push({
+    id: atIdCounter++,
+    proy: document.getElementById('at-proy').value,
+    nivel: document.getElementById('at-nivel').value,
+    texto: txt.value.trim(),
+    resp: document.getElementById('at-resp').value.trim(),
+    fecha: new Date().toLocaleDateString('es-MX'),
+    resuelto: false,
+  });
+  txt.value = ''; document.getElementById('at-resp').value = '';
+  saveAtencion(); renderAtencionManual();
+}
+document.getElementById('at-addBtn').addEventListener('click', agregarAtencion);
+document.getElementById('at-texto').addEventListener('keydown', e=>{ if(e.key==='Enter') agregarAtencion(); });
+document.getElementById('at-verResueltos').addEventListener('change', renderAtencionManual);
+
+
+/* ============================================================
+   REPORTE DIRECTORIO
+   - Borrador: se arma con los datos del momento.
+   - Emitir: guarda una "foto" del reporte (compartida en Google Sheets) para
+     consultarlo después y comparar el siguiente reporte contra este.
+   ============================================================ */
+const REP_KEY = 'plant27-reportes-data';
+let reportes = [];          // reportes emitidos (fotos)
+let repBorrador = {comentarios:'', emisor:''};
+let repVista = 'borrador';  // 'borrador' o id de un reporte emitido
+
+// % programado de una labor a la semana actual (lineal entre inicio y término)
+function progLabor(l, semana){
+  if(l.ini == null || l.fin == null) return 0;
+  if(semana < l.ini) return 0;
+  if(semana >= l.fin) return 100;
+  return Math.round((semana - l.ini + 1) / (l.fin - l.ini + 1) * 100);
+}
+function promedio(arr){ return arr.length ? Math.round(arr.reduce((s,v)=>s+v,0)/arr.length) : 0; }
+
+// Semáforo: compara real contra programado
+function semaforo(real, prog){
+  if(prog <= 0) return 'gris';
+  const d = real - prog;
+  if(d >= -5) return 'verde';
+  if(d >= -15) return 'amarillo';
+  return 'rojo';
+}
+const SEM_LABEL = {verde:'Al día', amarillo:'Atraso leve', rojo:'Atraso crítico', gris:'Sin iniciar'};
+
+function construirModelo(){
+  const semana = SEMANA_ACTUAL;
+  const proyectos = PROYECTOS.map(P=>{
+    const subs = {};
+    SUBPROY.forEach(sp=>{
+      const items = P.items.filter(l=>l.sub===sp.value);
+      const inis = items.map(l=>l.ini).filter(v=>v!=null), fins = items.map(l=>l.fin).filter(v=>v!=null);
+      subs[sp.value] = {
+        real: promedio(items.map(l=>Number(l.avance)||0)),
+        prog: promedio(items.map(l=>progLabor(l, semana))),
+        ini: inis.length?Math.min(...inis):null,
+        fin: fins.length?Math.max(...fins):null,
+        n: items.length,
+      };
+    });
+    return {
+      id:P.id, nombre:P.nombre, campo:P.campo, tipo:P.tipo, ha:P.ha,
+      real: promedio(P.items.map(l=>Number(l.avance)||0)),
+      prog: promedio(P.items.map(l=>progLabor(l, semana))),
+      atrasadas: P.items.filter(l=>estadoLabor(l)==='atrasada').length,
+      subs,
+    };
+  });
+  const haTot = proyectos.reduce((s,p)=>s+p.ha,0);
+  const pond = (k, arr)=>{ const h = arr.reduce((s,p)=>s+p.ha,0); return h ? Math.round(arr.reduce((s,p)=>s+p[k]*p.ha,0)/h) : 0; };
+  const plant = proyectos.filter(p=>p.tipo==='plantacion'), repl = proyectos.filter(p=>p.tipo==='replante');
+  // Labores atrasadas: las de mayor brecha programado - real
+  const atrasos = [];
+  PROYECTOS.forEach(P=>P.items.forEach(l=>{
+    if(estadoLabor(l)==='atrasada'){
+      const real = Number(l.avance)||0;
+      atrasos.push({proy:P.nombre, sub:l.sub, labor:l.labor, resp:l.resp, fin:l.fin, real, brecha:100-real});
+    }
+  }));
+  atrasos.sort((a,b)=>b.brecha-a.brecha || a.fin-b.fin);
+  const criticos = atencionManual.filter(a=>!a.resuelto).sort((a,b)=>(a.nivel==='red'?0:1)-(b.nivel==='red'?0:1))
+    .map(a=>({nivel:a.nivel, proy:atProyLabel(a.proy), texto:a.texto, resp:a.resp, fecha:a.fecha}));
+  return {
+    semana, fechaISO: new Date().toISOString(), fecha: new Date().toLocaleDateString('es-MX', {day:'numeric', month:'long', year:'numeric'}),
+    haTot, haPlant: plant.reduce((s,p)=>s+p.ha,0), haRepl: repl.reduce((s,p)=>s+p.ha,0),
+    real: pond('real', proyectos), prog: pond('prog', proyectos),
+    realPlant: pond('real', plant), realRepl: pond('real', repl),
+    proyectos, atrasosTotal: atrasos.length, atrasos: atrasos.slice(0,5), criticos,
+  };
+}
+
+function deltaHtml(actual, anterior){
+  if(anterior == null) return '';
+  const d = actual - anterior;
+  const cls = d>0?'up':(d<0?'down':'eq');
+  return `<span class="rep-delta ${cls}">${d>0?'+':''}${d}%</span>`;
+}
+
+function renderReporteDoc(m, base, meta){
+  const subLbl = Object.fromEntries(SUBPROY.map(s=>[s.value, s.label]));
+  const baseP = (id)=> base ? base.proyectos.find(p=>p.id===id) : null;
+  const estadoGlobal = semaforo(m.real, m.prog);
+
+  // Matriz proyectos x sub-proyectos
+  const matriz = `
+    <table class="rep-matriz">
+      <thead><tr>
+        <th class="l">Proyecto</th><th>Ha</th>
+        ${SUBPROY.map(s=>`<th>${s.label}</th>`).join('')}
+        <th>Total</th><th>Atrasadas</th>
+      </tr></thead>
+      <tbody>
+        ${m.proyectos.map(p=>{
+          const bp = baseP(p.id);
+          return `<tr>
+            <td class="l"><b>${p.campo}</b> <span class="proj-tag ${p.tipo}">${TIPO_LABEL[p.tipo]}</span></td>
+            <td>${p.ha}</td>
+            ${SUBPROY.map(s=>{
+              const c = p.subs[s.value];
+              const bc = bp && bp.subs[s.value];
+              return `<td class="sem-${semaforo(c.real,c.prog)}">
+                <div class="rep-cell-real">${c.real}%</div>
+                <div class="rep-cell-prog">prog. ${c.prog}% ${bc?deltaHtml(c.real, bc.real):''}</div>
+              </td>`;
+            }).join('')}
+            <td class="sem-${semaforo(p.real,p.prog)} tot">
+              <div class="rep-cell-real">${p.real}%</div>
+              <div class="rep-cell-prog">prog. ${p.prog}% ${bp?deltaHtml(p.real, bp.real):''}</div>
+            </td>
+            <td class="${p.atrasadas?'rep-rojo':''}">${p.atrasadas}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+    <div class="rep-leyenda">
+      ${['verde','amarillo','rojo','gris'].map(k=>`<span><i class="sem-${k}"></i>${SEM_LABEL[k]}</span>`).join('')}
+      <span class="rep-nota">Real = % capturado en campo · Programado = lo que debería llevar a la semana ${semLbl(m.semana)} según el cronograma${base?` · Variación contra el reporte del ${base.fecha}`:''}</span>
+    </div>`;
+
+  // Gantt resumido
+  const W0 = WEEK_START, W1 = WEEK_END, nW = W1-W0+1;
+  const pct = (w)=> ((w - W0) / nW * 100);
+  const gantt = `
+    <div class="rep-gantt">
+      <div class="rg-head">
+        <div class="rg-lbl"></div>
+        <div class="rg-track">
+          ${MESES_PL.map(mm=>`<div class="rg-mes" style="left:${pct(mm.from)}%; width:${(mm.to-mm.from+1)/nW*100}%">${mm.label.slice(0,3)}</div>`).join('')}
+        </div>
+      </div>
+      ${m.proyectos.map(p=>`
+        <div class="rg-proj">${p.nombre} · ${p.ha} ha</div>
+        ${SUBPROY.map(s=>{
+          const c = p.subs[s.value];
+          if(c.ini==null || c.fin==null) return '';
+          const ci = Math.max(c.ini, W0), cf = Math.min(c.fin, W1);
+          if(cf < W0 || ci > W1) return `<div class="rg-row"><div class="rg-lbl">${subLbl[s.value]}</div><div class="rg-track rg-fuera"><span>${cf < W0 ? 'Concluido antes de septiembre' : ''}</span></div><div class="rg-val">${c.real}%</div></div>`;
+          return `<div class="rg-row">
+            <div class="rg-lbl">${subLbl[s.value]}</div>
+            <div class="rg-track" style="background-size:calc(100%/${nW}) 100%">
+              <div class="rg-bar ${s.value}" style="left:${pct(ci)}%; width:${(cf-ci+1)/nW*100}%">
+                <div class="rg-fill" style="width:${c.real}%"></div>
+              </div>
+            </div>
+            <div class="rg-val">${c.real}%</div>
+          </div>`;
+        }).join('')}
+      `).join('')}
+      <div class="rg-now" style="left:calc(110px + (100% - 160px) * ${(pct(m.semana)+ (100/nW)/2)/100})"><span>Sem ${semLbl(m.semana)}</span></div>
+    </div>
+    <div class="rep-leyenda"><span>Barra clara = periodo programado · Parte oscura = avance real</span></div>`;
+
+  const atrasos = m.atrasos.length ? `
+    <table class="rep-lista">
+      <thead><tr><th class="l">Proyecto</th><th class="l">Sub-proyecto</th><th class="l">Labor</th><th class="l">Responsable</th><th>Debía terminar</th><th>Avance</th></tr></thead>
+      <tbody>${m.atrasos.map(a=>`<tr>
+        <td class="l">${escapeHtml(a.proy)}</td><td class="l">${subLbl[a.sub]||a.sub}</td><td class="l">${escapeHtml(a.labor)}</td>
+        <td class="l">${escapeHtml(a.resp||'—')}</td><td>Sem ${semLbl(a.fin)}</td><td class="rep-rojo">${a.real}%</td></tr>`).join('')}</tbody>
+    </table>
+`
+    : `<div class="rep-ok">Sin labores atrasadas.</div>`;
+
+  const criticos = m.criticos.length ? `<ul class="rep-crit">${m.criticos.map(c=>`
+      <li><span class="tag tag-${c.nivel}">${c.nivel==='red'?'Crítico':'Atención'}</span>
+      <b>${escapeHtml(c.proy)}:</b> ${escapeHtml(c.texto)}${c.resp?` <span class="rep-nota">— ${escapeHtml(c.resp)}</span>`:''}</li>`).join('')}</ul>`
+    : `<div class="rep-ok">Sin puntos de atención abiertos.</div>`;
+
+  const comentarios = meta.editable
+    ? `<textarea id="rep-coment" placeholder="Escribe aquí los comentarios para directorio: logros de la semana, decisiones requeridas, riesgos...">${escapeHtml(meta.comentarios||'')}</textarea>
+       <div class="rep-coment-print">${escapeHtml(meta.comentarios||'').replace(/\n/g,'<br>') || '<span class="rep-nota">Sin comentarios.</span>'}</div>`
+    : `<div class="rep-coment-fijo">${escapeHtml(meta.comentarios||'').replace(/\n/g,'<br>') || '<span class="rep-nota">Sin comentarios.</span>'}</div>`;
+
+  const logo = document.querySelector('.hero-logo').src;
+  const header = (pag)=>`
+    <div class="rep-header">
+      <img src="${logo}" alt="Molina">
+      <div class="rep-title">
+        <h1>Plantación y Replante 2027</h1>
+        <div>Reporte de avance para Directorio · Grupo Molina Jalisco</div>
+      </div>
+      <div class="rep-fecha">
+        <b>${m.fecha}</b><br>Semana ${semLbl(m.semana)}${meta.emisor?`<br>Emite: ${escapeHtml(meta.emisor)}`:''}
+        <div class="rep-estado ${meta.editable?'borrador':''}">${meta.editable?'BORRADOR':'EMITIDO'} · Pág. ${pag}/2</div>
+      </div>
+    </div>`;
+
+  document.getElementById('rep-doc').innerHTML = `
+    <div class="rep-page">
+      ${header(1)}
+      <div class="rep-kpis">
+        <div class="rep-kpi"><div class="k">Superficie total</div><div class="v">${m.haTot} ha</div><div class="s">${m.haPlant} ha plantación · ${m.haRepl} ha replante</div></div>
+        <div class="rep-kpi sem-${estadoGlobal}"><div class="k">Avance real (ponderado por ha)</div><div class="v">${m.real}% ${base?deltaHtml(m.real, base.real):''}</div><div class="s">Programado a la fecha: ${m.prog}%</div></div>
+        <div class="rep-kpi"><div class="k">Brecha contra programa</div><div class="v ${m.real-m.prog<0?'rep-rojo':''}">${m.real-m.prog>0?'+':''}${m.real-m.prog} pts</div><div class="s">${SEM_LABEL[estadoGlobal]}</div></div>
+        <div class="rep-kpi"><div class="k">Plantación / Replante</div><div class="v">${m.realPlant}% · ${m.realRepl}%</div><div class="s">Avance real por tipo de proyecto</div></div>
+      </div>
+      <h2>Avance por proyecto y sub-proyecto</h2>
+      ${matriz}
+      <div class="rep-2col">
+        <div><h2>Puntos de atención abiertos</h2>${criticos}</div>
+        <div><h2>Comentarios de la gerencia</h2>${comentarios}</div>
+      </div>
+      <h2>Labores atrasadas${m.atrasosTotal > m.atrasos.length ? ` <span class="rep-h2-nota">— las ${m.atrasos.length} con mayor atraso de ${m.atrasosTotal}</span>`:''}</h2>
+      ${atrasos}
+    </div>
+    <div class="rep-page">
+      ${header(2)}
+      <h2>Cronograma resumido por sub-proyecto</h2>
+      ${gantt}
+    </div>`;
+
+  const ta = document.getElementById('rep-coment');
+  if(ta){
+    ta.addEventListener('input', ()=>{ repBorrador.comentarios = ta.value; ta.nextElementSibling.innerHTML = escapeHtml(ta.value).replace(/\n/g,'<br>'); });
+    ta.addEventListener('blur', saveReportes);
+  }
+}
+
+function renderReporte(){
+  const sel = document.getElementById('rep-select');
+  sel.innerHTML = `<option value="borrador">Borrador actual (datos de hoy)</option>` +
+    [...reportes].reverse().map(r=>`<option value="${r.id}">Emitido ${r.modelo.fecha} · Sem ${semLbl(r.modelo.semana)}</option>`).join('');
+  if(repVista !== 'borrador' && !reportes.find(r=>String(r.id)===String(repVista))) repVista = 'borrador';
+  sel.value = String(repVista);
+  const esBorrador = repVista === 'borrador';
+  document.getElementById('rep-emitirBtn').style.display = esBorrador ? '' : 'none';
+  document.getElementById('rep-emisor').disabled = !esBorrador;
+  let modelo, base, meta;
+  if(esBorrador){
+    modelo = construirModelo();
+    base = reportes.length ? reportes[reportes.length-1].modelo : null;
+    meta = {editable:true, comentarios:repBorrador.comentarios, emisor:repBorrador.emisor};
+    document.getElementById('rep-emisor').value = repBorrador.emisor || '';
+    document.getElementById('rep-help').textContent = base
+      ? `Borrador con los datos de hoy. Las variaciones se comparan contra el último reporte emitido (${base.fecha}). Al terminar, da clic en "Emitir reporte" para dejarlo registrado.`
+      : 'Borrador con los datos de hoy. Al emitirlo queda registrado y el siguiente reporte mostrará la variación contra este.';
+  } else {
+    const i = reportes.findIndex(r=>String(r.id)===String(repVista));
+    modelo = reportes[i].modelo;
+    base = i>0 ? reportes[i-1].modelo : null;
+    meta = {editable:false, comentarios:reportes[i].comentarios, emisor:reportes[i].emisor};
+    document.getElementById('rep-emisor').value = reportes[i].emisor || '';
+    document.getElementById('rep-help').textContent = 'Reporte emitido (solo lectura). Los números corresponden a la fecha de emisión.';
+  }
+  renderReporteDoc(modelo, base, meta);
+}
+
+async function loadReportes(){
+  try{
+    let d = await dualGet(REP_KEY);
+    if(!d && DATOS_EMBEBIDOS && DATOS_EMBEBIDOS.reportes){ d = DATOS_EMBEBIDOS.reportes; reportes = d.reportes||[]; repBorrador = d.borrador||repBorrador; saveReportes(); }
+    reportes = (d && d.reportes) || [];
+    repBorrador = (d && d.borrador) || {comentarios:'', emisor:''};
+  }catch(e){ reportes = []; }
+  if(document.getElementById('sheet-reporte').classList.contains('active')) renderReporte();
+}
+let repSaveTimeout;
+async function saveReportes(){
+  const ok = await dualSet(REP_KEY, {reportes, borrador:repBorrador});
+  const note = document.getElementById('rep-saveNote');
+  note.textContent = ok ? 'Guardado ✓' : 'Guardado ✓ (local)';
+  clearTimeout(repSaveTimeout);
+  repSaveTimeout = setTimeout(()=>{note.textContent='';}, 1500);
+}
+
+document.getElementById('rep-select').addEventListener('change', e=>{ repVista = e.target.value; renderReporte(); });
+document.getElementById('rep-emisor').addEventListener('change', e=>{ repBorrador.emisor = e.target.value; saveReportes(); renderReporte(); });
+document.getElementById('rep-printBtn').addEventListener('click', ()=>window.print());
+document.getElementById('rep-emitirBtn').addEventListener('click', async ()=>{
+  if(!confirm('¿Emitir el reporte con los datos de hoy? Quedará registrado y el siguiente reporte se comparará contra este.')) return;
+  const modelo = construirModelo();
+  reportes.push({id: Date.now(), modelo, comentarios: repBorrador.comentarios, emisor: repBorrador.emisor});
+  repBorrador.comentarios = '';
+  repVista = String(reportes[reportes.length-1].id);
+  renderReporte();
+  await saveReportes();
+});
+document.querySelector('.tab-btn[data-sheet="reporte"]').addEventListener('click', renderReporte);
+
+/* ============ GUARDAR HTML (copia de la app con los datos de hoy incrustados) ============
+   El archivo descargado funciona igual que el link: se conecta a Google Sheets.
+   Si se abre sin conexión (o en otra base vacía) arranca con los datos incrustados. */
+document.getElementById('saveHtmlBtn').addEventListener('click', ()=>{
+  try{
+    const datos = {
+      guardado: new Date().toISOString(),
+      proyectos: Object.fromEntries(PROYECTOS.map(P=>[P.id, {items:P.items, idCounter:P.idCounter, ha:P.ha}])),
+      atencion: {items:atencionManual, idCounter:atIdCounter},
+      reportes: {reportes, borrador:repBorrador},
+    };
+    const json = JSON.stringify(datos).replace(/</g,'\\u003c');
+    const marca = new RegExp('^const DATOS_' + 'EMBEBIDOS = [^\\n]*;$', 'm');
+    const html = HTML_ORIGINAL.replace(marca, ()=>'const DATOS_' + 'EMBEBIDOS = ' + json + ';');
+    const blob = new Blob([html], {type:'text/html'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `plantacion-replante-2027-${new Date().toISOString().slice(0,10)}.html`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }catch(e){
+    console.error('Error guardando HTML', e);
+    alert('No se pudo generar el HTML.');
+  }
+});
+
+/* ============ EXPORTAR A GOOGLE SHEETS (.xlsx) ============ */
+document.getElementById('exportSheetsBtn').addEventListener('click', ()=>{
+  try{
+    const wb = XLSX.utils.book_new();
+    const subLabel = Object.fromEntries(SUBPROY.map(s=>[s.value, s.label]));
+    const res = [['PLANTACIÓN Y REPLANTE 2027',''],['Exportado', new Date().toLocaleString('es-MX')],['Semana actual', SEMANA_ACTUAL],[],
+      ['Proyecto','Tipo','Hectáreas','Labores','% Avance']];
+    PROYECTOS.forEach(P=>res.push([P.campo, TIPO_LABEL[P.tipo], P.ha, P.items.length, avanceProyecto(P.items)]));
+    res.push([], ['AVANCE POR SUB-PROYECTO (%)', ...SUBPROY.map(s=>s.label)]);
+    PROYECTOS.forEach(P=>res.push([P.nombre, ...SUBPROY.map(s=>avanceProyecto(P.items.filter(l=>l.sub===s.value)))]));
+    const wsR = XLSX.utils.aoa_to_sheet(res);
+    wsR['!cols'] = [{wch:26},{wch:14},{wch:12},{wch:10},{wch:10}];
+    XLSX.utils.book_append_sheet(wb, wsR, 'Resumen');
+    PROYECTOS.forEach(P=>{
+      const aoa = [['Sub-proyecto','Actividad','Responsable','Cantidad (ha)','% Avance','Semana inicio','Semana término','Estado','Observaciones']];
+      const est = {completada:'Completada', encurso:'En curso', atrasada:'Atrasada', porIniciar:'Por iniciar'};
+      [...P.items].sort((a,b)=>SUBPROY.findIndex(s=>s.value===a.sub)-SUBPROY.findIndex(s=>s.value===b.sub)).forEach(l=>aoa.push([subLabel[l.sub]||l.sub, l.labor, l.resp, l.meta, Number(l.avance)||0, semLbl(l.ini), semLbl(l.fin), est[estadoLabor(l)], l.notas||'']));
+      const ws = XLSX.utils.aoa_to_sheet(aoa);
+      ws['!cols'] = [{wch:14},{wch:30},{wch:18},{wch:12},{wch:10},{wch:12},{wch:13},{wch:12},{wch:40}];
+      XLSX.utils.book_append_sheet(wb, ws, P.nombre.slice(0,31));
+    });
+    XLSX.writeFile(wb, `plantacion-replante-2027-${new Date().toISOString().slice(0,10)}.xlsx`);
+  }catch(e){
+    console.error(e);
+    alert('No se pudo generar el archivo .xlsx. Intenta de nuevo o usa el respaldo .json.');
+  }
+});
+
+/* ============ GUARDAR TODO AHORA ============ */
+document.getElementById('saveAllBtn').addEventListener('click', async ()=>{
+  const btn = document.getElementById('saveAllBtn');
+  const note = document.getElementById('globalSaveNote');
+  btn.textContent = 'Guardando...';
+  try{
+    await Promise.all(PROYECTOS.map(P=>P.save()));
+    note.textContent = '✓ Todo guardado correctamente — ' + new Date().toLocaleTimeString('es-MX');
+    note.style.color = 'var(--deere-green-dark)'; note.style.fontWeight = '700';
+  }catch(e){
+    note.textContent = '⚠ Hubo un problema guardando. Usa "Exportar datos" como respaldo.';
+    note.style.color = 'var(--red)'; note.style.fontWeight = '700';
+  }
+  btn.textContent = 'Guardar todo ahora';
+  setTimeout(()=>{
+    note.textContent = 'Guardado automático activo — usa "Guardar todo ahora" si quieres asegurarlo manualmente';
+    note.style.color = ''; note.style.fontWeight = '';
+  }, 4000);
+});
+
+/* ============ EXPORTAR / IMPORTAR RESPALDO ============ */
+document.getElementById('exportBtn').addEventListener('click', ()=>{
+  const backup = {exportado: new Date().toISOString(), proyectos: {}};
+  PROYECTOS.forEach(P=>{ backup.proyectos[P.id] = {items:P.items, idCounter:P.idCounter}; });
+  const blob = new Blob([JSON.stringify(backup, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `respaldo-plantacion-replante-2027-${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
+document.getElementById('importBtn').addEventListener('click', ()=>document.getElementById('importInput').click());
+document.getElementById('importInput').addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = async (evt)=>{
+    try{
+      const data = JSON.parse(evt.target.result);
+      if(!data.proyectos) throw new Error('formato');
+      if(!confirm('Esto reemplazará los datos actuales por los del archivo importado. ¿Continuar?')) return;
+      for(const P of PROYECTOS){
+        const d = data.proyectos[P.id];
+        if(d){ P.items = d.items||[]; P.idCounter = d.idCounter || (P.items.length+1); await P.save(); P.render(); }
+      }
+      alert('Datos importados correctamente.');
+    }catch(err){ alert('El archivo no es un respaldo válido.'); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+});
+
+/* ============ INIT ============ */
+// Re-enlaza las pestañas (las hojas de proyecto se crean por código)
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.sheet').forEach(s=>s.classList.toggle('active', s.id === 'sheet-'+btn.dataset.sheet));
+  });
+});
+renderResumen();
+PROYECTOS.forEach(P=>P.load());
+loadAtencion();
+loadReportes();
+
+</script></body></html>
